@@ -61,9 +61,7 @@ export const GET = async (req: Request) => {
 export const OPTIONS = async () => Response.json(null, { headers });
 
 export const POST = async (req: Request) => {
-  // const reqBody: ActionPostRequest = await req.json()
-  // const data: any = reqBody.data
-  // const dd = data.title
+  
   try {
     const reqBody: ActionPostRequest = await req.json()
     const user = reqBody.account
@@ -77,29 +75,24 @@ export const POST = async (req: Request) => {
     
     const title = data.title
     const description = data.description
-    const options = [data.options]
+    const array = data.options.split(',').map((item: string) => item.trim());
+    const options = array
     const duration = data.duration
 
     const transaction = await createProposal(title, description, options, proposalId, duration, user, proposalPda)
 
+    const payload: ActionPostResponse = await createPostResponse({
+      fields: {
+        transaction,
+        message: "Post this memo on-chain",
+        links: {
+          next: getCompletedAction(proposalPda.toBase58())
+        },
+      },
 
-    // const payload: ActionPostResponse = await createPostResponse({
-    //   fields: {
-    //     transaction,
-    //     message: "Post this memo on-chain",
-    //     // links: {
-    //     //   next: getCompletedAction(proposalPda.toBase58())
-    //     // },
-    //   },
+    });
 
-    // });
-    cProposal
-    const res: ActionPostResponse = {
-      transaction: transaction,
-      message: "Thank You !!"
-    }
-
-    return Response.json(res, {
+    return Response.json(payload, {
       headers,
     });
   } catch (err) {

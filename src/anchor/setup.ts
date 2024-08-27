@@ -65,26 +65,28 @@ export const createProposal = async (title: string, description: string, options
         tx.recentBlockhash = blockhash;
         tx.feePayer = userPubKey;
 
-        console.log(tx);
+        // console.log(tx);
         console.log("Transaction created successfully. Sending to wallet for approval.");
 
         // Serialize the transaction
-        const serializedTx = tx.serialize({
-            requireAllSignatures: false,
-            verifySignatures: false,
-        }).toString('base64');
-        console.log('Serialized Transaction:', serializedTx);
-console.log(await program.account.proposal.all())
-        return serializedTx
+        // const serializedTx = tx.serialize({
+        //     requireAllSignatures: false,
+        //     verifySignatures: false,
+        // }).toString('base64');
+        // console.log('Serialized Transaction:', serializedTx);
+
+        return tx
     } catch (error) {
         console.error("Transaction creation failed", error);
         throw new Error("Transaction creation failed");
     }
 };
 
-export const vote = async (proposalPublicKey: PublicKey, user: PublicKey, optionIndex: number) => {
-
-    const { voterPDA } = await deriveVoterPDA(user, proposalPublicKey)
+export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {
+    const user = new PublicKey(publicKey)
+    const proposalPDA = new PublicKey(proposalPublicKey)
+    const { voterPDA } = await deriveVoterPDA(user, proposalPDA)
+    console.log(voterPDA)
     try {
         const tx = await program.methods.vote(optionIndex)
             .accounts({
@@ -95,8 +97,9 @@ export const vote = async (proposalPublicKey: PublicKey, user: PublicKey, option
             })
             .transaction();
 
-        // Set the recent blockhash and fee payer
-        tx.recentBlockhash = (await connection.getLatestBlockhash({ commitment: "finalized" })).blockhash;
+        // Fetch the recent blockhash and set the fee payer
+        const { blockhash } = await connection.getLatestBlockhash({ commitment: "finalized" });
+        tx.recentBlockhash = blockhash;
         tx.feePayer = user;
 
         console.log('Sending transaction...');
@@ -110,10 +113,8 @@ export const vote = async (proposalPublicKey: PublicKey, user: PublicKey, option
 
         return serializedTx
     } catch {
-        return Response.json({
-            status: 400,
-            error: "tx error"
-        })
+        console.error("Transaction creation failed", error);
+        throw new Error("Transaction creation failed");
     }
 }
 
@@ -138,3 +139,18 @@ export const cProposal = async () => {
     });
     console.log(proposals)
 }
+
+export const findOneProposal = async (proposalPDA: string) => {
+    return await program.account.proposal.fetch(proposalPDA);
+}
+
+export const HasVoted = async (proposalPDA: string, user: string) => {
+    const voters = await program.account.voter.all();
+    const userHasVoted = voters.some(voter =>
+        voter.account.user.equals(new PublicKey(user)) &&
+        voter.account.proposal.equals(new PublicKey(proposalPDA as string))
+    );
+    return userHasVoted
+}
+
+
