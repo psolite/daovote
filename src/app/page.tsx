@@ -4,9 +4,11 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="">
+    <main className="min-h-screen">
       {/* <Hero /> */}
       <CreatePoll />
     </main>
   );
 }
+
+// git push -u origin frontend

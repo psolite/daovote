@@ -10,18 +10,11 @@
 }
 
 :root {
-  --black: #0e0a09;
-  --green: #00a52c;
-  --yellow: #fcc019;
-  --grey: #adadad;
+  --blue: #003398;
   --white: #fff;
-  --lemon: #fcff6d;
-  --dark-text: #144049;
-  --transition: 0.5s;
-  --max-width: 1078px;
 }
 
 body {
-  background: var(--white);
+  background: var(--blue);
   overflow-x: hidden;
 }
