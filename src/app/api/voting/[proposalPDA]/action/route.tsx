@@ -1,12 +1,5 @@
-import { cProposal, createProposal, deriveProposalPDA, deriveVoterPDA, findOneProposal, HasVoted, vote } from "@/anchor/setup";
+import { findOneProposal, HasVoted, vote } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextActionLink } from "@solana/actions";
-import { Transaction } from "@solana/web3.js";
-import { NextApiRequest } from "next";
-// app/api/items/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-
-
-
 
 const headers = createActionHeaders();
 
@@ -15,15 +8,34 @@ export const GET = async (req: Request) => {
     const proposalPDA = url.pathname.split('/')[3];
 
     const proposal = await findOneProposal(proposalPDA as string);
+    const now = Date.now()
+    let closed = false;
+
+    // Convert proposal.createdAt from seconds to milliseconds
+    const createdAtInMillis = proposal.createdAt * 1000;
+    const durationInMillis = proposal.duration * 1000;
+
+    // Calculate the closing time by adding duration to the creation time
+    const closingTime = createdAtInMillis + durationInMillis;
+
+    if (now >= +closingTime) {
+        console.log("in")
+        closed = true
+    }
+    // console.log(closed, now, +(proposal.createdAt + proposal.duration), closingTime)
+
     const mappedOptions = proposal.options.map((option, index) => ({
         href: `${req.url}?optionIndex=${index}&proposalPDA=${proposalPDA}`,
         label: option,
+
     }));
+
     //   console.log(proposal.options,proposal.options.length, "66666666666666666666666666666666666666666")
     const payload: ActionGetResponse = {
         title: proposal.title,
         icon: new URL("/solana_devs.jpg", new URL(req.url).origin).toString(),
         description: proposal.description,
+        disabled: closed,
         label: "Send Memo",
         links: {
             actions: mappedOptions

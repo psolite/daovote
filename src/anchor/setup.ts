@@ -90,7 +90,7 @@ export const vote = async (proposalPublicKey: string, publicKey: string, optionI
     try {
         const tx = await program.methods.vote(optionIndex)
             .accounts({
-                proposal: proposalPublicKey,
+                proposal: proposalPDA,
                 voter: voterPDA,
                 user: user,
                 systemProgram: web3.SystemProgram.programId,

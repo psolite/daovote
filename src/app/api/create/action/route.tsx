@@ -1,23 +1,20 @@
-import { cProposal, createProposal, deriveProposalPDA } from "@/anchor/setup";
+import {createProposal, deriveProposalPDA } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextActionLink } from "@solana/actions";
-import { Transaction } from "@solana/web3.js";
 import { getCompletedAction } from "../../complete/action/route";
-import { error } from "console";
-
 
 const headers = createActionHeaders();
 
 export const GET = async (req: Request) => {
   const payload: ActionGetResponse = {
-    title: "Simple Action Chaining Example",
-    icon: new URL("/solana_devs.jpg", new URL(req.url).origin).toString(),
-    description: "Create a poll and get link for your audience ",
+    title: "Create a Poll",
+    icon: 'https://news.miami.edu/_assets/images-stories/2023/02/dao-web3-hero-940x529.jpg',
+    description: `Transparent and tamper-proof community decision making`,
     label: "Send Memo",
     links: {
       actions: [
         {
           href: req.url,
-          label: "Send Memo",
+          label: "Create",
           parameters: [
             {
               name: "title",
@@ -34,12 +31,11 @@ export const GET = async (req: Request) => {
             {
               patternDescription: "use (,) to add options",
               name: "options",
-              label: "bonk, wen, Jup",
+              label: "BONK, WEN, JUP",
               type: "textarea",
               required: true
             },
             {
-              patternDescription: "duration",
               name: "duration",
               label: "Duration in hours?",
               type: "number",
@@ -61,7 +57,7 @@ export const GET = async (req: Request) => {
 export const OPTIONS = async () => Response.json(null, { headers });
 
 export const POST = async (req: Request) => {
-  
+
   try {
     const reqBody: ActionPostRequest = await req.json()
     const user = reqBody.account
@@ -72,7 +68,7 @@ export const POST = async (req: Request) => {
 
     const data: any = reqBody.data
     // if(!data){return {error: "no data found"}}
-    
+
     const title = data.title
     const description = data.description
     const array = data.options.split(',').map((item: string) => item.trim());
@@ -84,7 +80,7 @@ export const POST = async (req: Request) => {
     const payload: ActionPostResponse = await createPostResponse({
       fields: {
         transaction,
-        message: "Post this memo on-chain",
+        message: "Done",
         links: {
           next: getCompletedAction(proposalPda.toBase58())
         },
