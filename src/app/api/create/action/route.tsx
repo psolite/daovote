@@ -1,13 +1,15 @@
-import {createProposal, deriveProposalPDA } from "@/anchor/setup";
+import { createProposal, deriveProposalPDA } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextActionLink } from "@solana/actions";
 import { getCompletedAction } from "../../complete/action/route";
+import { BlinksightsClient } from "blinksights-sdk";
 
+const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');
 const headers = createActionHeaders();
 
 export const GET = async (req: Request) => {
-  const payload: ActionGetResponse = {
+  const payload: ActionGetResponse = client.createActionGetResponseV1(req.url, {
     title: "Create a Poll",
-    icon: 'https://news.miami.edu/_assets/images-stories/2023/02/dao-web3-hero-940x529.jpg',
+    icon: new URL("/image/dao5.jpg", new URL(req.url).origin).toString(),
     description: `Transparent and tamper-proof community decision making`,
     label: "Send Memo",
     links: {
@@ -31,7 +33,7 @@ export const GET = async (req: Request) => {
             {
               patternDescription: "use (,) to add options",
               name: "options",
-              label: "BONK, WEN, JUP",
+              label: "Options eg: BONK, WEN, JUP",
               type: "textarea",
               required: true
             },
@@ -45,8 +47,8 @@ export const GET = async (req: Request) => {
         },
       ],
     },
-  };
-  console.log("here")
+  });
+  // console.log("here")
   return Response.json(payload, {
     headers,
   });
@@ -61,28 +63,35 @@ export const POST = async (req: Request) => {
   try {
     const reqBody: ActionPostRequest = await req.json()
     const user = reqBody.account
+    // client.trackActionV2(user, req.url);
+    client.trackActionV1(req.headers, user, req.url);
 
     const { proposalPda, proposalId } = await deriveProposalPDA(user)
 
-    console.log("body:", req.body);
+    // console.log("body:", req.body);
 
     const data: any = reqBody.data
     // if(!data){return {error: "no data found"}}
 
     const title = data.title
     const description = data.description
-    const array = data.options.split(',').map((item: string) => item.trim());
+    const array = data.options
+      .split(',')
+      .map((item: string) => item.trim())
+      .filter((item: string) => item.length > 0);
     const options = array
     const duration = data.duration
+    const tokenarray: string[] = []
+    const amountarray: number[] = []
 
-    const transaction = await createProposal(title, description, options, proposalId, duration, user, proposalPda)
-
+    const transaction = await createProposal(title, description, options, tokenarray, proposalId, duration, user, proposalPda, amountarray)
+    const imageurl = new URL("/image/dao5.jpg", new URL(req.url).origin).toString();
     const payload: ActionPostResponse = await createPostResponse({
       fields: {
         transaction,
         message: "Done",
         links: {
-          next: getCompletedAction(proposalPda.toBase58())
+          next: getCompletedAction(proposalPda.toBase58(), imageurl)
         },
       },
 
@@ -92,7 +101,7 @@ export const POST = async (req: Request) => {
       headers,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     let actionError: ActionError = { message: `An unknown error occurred ${err}` };
     if (typeof err == "string") actionError.message = err;
     return Response.json(actionError, {

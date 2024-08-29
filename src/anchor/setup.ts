@@ -7,7 +7,7 @@ import { error } from 'console';
 
 const network = clusterApiUrl('devnet');
 const connection = new Connection(network, 'confirmed');
-const programID = new PublicKey('tygJWUu63WsaoHRanbLKo89TdgK6Z4p2QShrPtgHFfp');
+const programID = new PublicKey('tydvPhKqpNFNqkx78LNocANNtVyJs7ba3czkcoWB3RJ');
 
 export const program = new Program<DaoVoting>(IDL, programID, {
     connection
@@ -45,13 +45,19 @@ export const deriveVoterPDA = async (publicKey: PublicKey, proposal: PublicKey) 
     return { voterPDA, bump }
 }
 
-export const createProposal = async (title: string, description: string, options: string[], proposalId: BN, duration: number, user: string, proposalPda: PublicKey) => {
+export const createProposal = async (title: string, description: string, options: string[], token: string[], proposalId: BN, duration: number, user: string, proposalPda: PublicKey, token_amount: number[]) => {
     const durationBN = new BN(duration * 60 * 60);
-    const point = 10;
-    const treasury = new PublicKey("E7XFPNa2YfPQ9FhaTqsPyAmH9QJtTs6PTu9YZSaLQv5p");
+
+    const treasury = new PublicKey("3nm2ogijjiaSKPWCyTj4aNvEniJu5a34TZiZ43AEEGpX");
     const userPubKey = new PublicKey(user);
+    let token_amounts: BN[];
+    if (!token_amount) {
+        token_amounts = []
+    } else {
+        token_amounts = token_amount.map((num) => new BN(num))
+    }
     try {
-        const tx = await program.methods.createProposal(title, description, options, proposalId, durationBN, point)
+        const tx = await program.methods.createProposal(title, description, options, token, durationBN, token_amounts, proposalId)
             .accounts({
                 proposal: proposalPda,
                 user: userPubKey,
@@ -65,7 +71,7 @@ export const createProposal = async (title: string, description: string, options
         tx.recentBlockhash = blockhash;
         tx.feePayer = userPubKey;
 
-        // console.log(tx);
+
         console.log("Transaction created successfully. Sending to wallet for approval.");
 
         // Serialize the transaction
@@ -77,16 +83,16 @@ export const createProposal = async (title: string, description: string, options
 
         return tx
     } catch (error) {
-        console.error("Transaction creation failed", error);
+        // console.error("Transaction creation failed", error);
         throw new Error("Transaction creation failed");
     }
 };
 
-export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {
+export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {console.log(publicKey, proposalPublicKey)
     const user = new PublicKey(publicKey)
     const proposalPDA = new PublicKey(proposalPublicKey)
     const { voterPDA } = await deriveVoterPDA(user, proposalPDA)
-    console.log(voterPDA)
+    
     try {
         const tx = await program.methods.vote(optionIndex)
             .accounts({
@@ -118,27 +124,31 @@ export const vote = async (proposalPublicKey: string, publicKey: string, optionI
     }
 }
 
-export const cProposal = async () => {
-    const allProposal = await program.account.proposal.all();
+// export const cProposal = async () => {
+//     const allProposal = await program.account.proposal.all();
 
-    const proposals = allProposal.map((proposal) => {
+//     const proposals = allProposal.map((proposal) => {
 
-        const optionsWithVoteCounts = proposal.account.options.map((option, index) => {
-            const voteCount = proposal.account.voteCounts[index];
-            return `${option.toString()}: ${voteCount.toString()}`;
-        });
+//         const optionsWithVoteCounts = proposal.account.options.map((option, index) => {
+//             const voteCount = proposal.account.voteCounts[index];
+//             return `${option.toString()}: ${voteCount.toString()}`;
+//         });
+//         const tokenWithamount = proposal.account.token.map((token, index) => {
+//             const amount = proposal.account.voteCounts[index];
+//             return `${token.toString()}: ${amount.toString()}`;
+//         });
 
-        return {
-            title: proposal.account.title.toString(),
-            description: proposal.account.description.toString(),
-            optionsWithVoteCounts,
-            createdAt: proposal.account.createdAt.toString(),
-            duration: proposal.account.duration.toString(),
-            point: proposal.account.point
-        }
-    });
-    console.log(proposals)
-}
+//         return {
+//             title: proposal.account.title.toString(),
+//             description: proposal.account.description.toString(),
+//             optionsWithVoteCounts,
+//             createdAt: proposal.account.createdAt.toString(),
+//             duration: proposal.account.duration.toString(),
+//             tokenWithamount
+//         }
+//     });
+//     console.log(proposals)
+// }
 
 export const findOneProposal = async (proposalPDA: string) => {
     return await program.account.proposal.fetch(proposalPDA);

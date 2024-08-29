@@ -45,16 +45,24 @@ export type DaoVoting = {
           }
         },
         {
-          "name": "proposalId",
-          "type": "u64"
+          "name": "token",
+          "type": {
+            "vec": "string"
+          }
         },
         {
           "name": "duration",
           "type": "i64"
         },
         {
-          "name": "point",
-          "type": "u32"
+          "name": "tokenAmount",
+          "type": {
+            "vec": "u64"
+          }
+        },
+        {
+          "name": "proposalId",
+          "type": "u64"
         }
       ]
     },
@@ -88,20 +96,6 @@ export type DaoVoting = {
           "type": "u8"
         }
       ]
-    },
-    {
-      "name": "getProposalPda",
-      "accounts": [
-        {
-          "name": "user",
-          "isMut": false,
-          "isSigner": true
-        }
-      ],
-      "args": [],
-      "returns": {
-        "defined": "GetProposalPDAResponse"
-      }
     }
   ],
   "accounts": [
@@ -111,8 +105,10 @@ export type DaoVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "proposalId",
-            "type": "u64"
+            "name": "token",
+            "type": {
+              "vec": "string"
+            }
           },
           {
             "name": "title",
@@ -143,8 +139,10 @@ export type DaoVoting = {
             "type": "i64"
           },
           {
-            "name": "point",
-            "type": "u32"
+            "name": "tokenAmount",
+            "type": {
+              "vec": "u64"
+            }
           }
         ]
       }
@@ -171,26 +169,6 @@ export type DaoVoting = {
     }
   ],
   "types": [
-    {
-      "name": "GetProposalPDAResponse",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "proposalPda",
-            "type": "publicKey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          },
-          {
-            "name": "proposalId",
-            "type": "u64"
-          }
-        ]
-      }
-    },
     {
       "name": "VoteOnOption",
       "type": {
@@ -260,16 +238,24 @@ export const IDL: DaoVoting = {
           }
         },
         {
-          "name": "proposalId",
-          "type": "u64"
+          "name": "token",
+          "type": {
+            "vec": "string"
+          }
         },
         {
           "name": "duration",
           "type": "i64"
         },
         {
-          "name": "point",
-          "type": "u32"
+          "name": "tokenAmount",
+          "type": {
+            "vec": "u64"
+          }
+        },
+        {
+          "name": "proposalId",
+          "type": "u64"
         }
       ]
     },
@@ -303,20 +289,6 @@ export const IDL: DaoVoting = {
           "type": "u8"
         }
       ]
-    },
-    {
-      "name": "getProposalPda",
-      "accounts": [
-        {
-          "name": "user",
-          "isMut": false,
-          "isSigner": true
-        }
-      ],
-      "args": [],
-      "returns": {
-        "defined": "GetProposalPDAResponse"
-      }
     }
   ],
   "accounts": [
@@ -326,8 +298,10 @@ export const IDL: DaoVoting = {
         "kind": "struct",
         "fields": [
           {
-            "name": "proposalId",
-            "type": "u64"
+            "name": "token",
+            "type": {
+              "vec": "string"
+            }
           },
           {
             "name": "title",
@@ -358,8 +332,10 @@ export const IDL: DaoVoting = {
             "type": "i64"
           },
           {
-            "name": "point",
-            "type": "u32"
+            "name": "tokenAmount",
+            "type": {
+              "vec": "u64"
+            }
           }
         ]
       }
@@ -386,26 +362,6 @@ export const IDL: DaoVoting = {
     }
   ],
   "types": [
-    {
-      "name": "GetProposalPDAResponse",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "proposalPda",
-            "type": "publicKey"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          },
-          {
-            "name": "proposalId",
-            "type": "u64"
-          }
-        ]
-      }
-    },
     {
       "name": "VoteOnOption",
       "type": {
