@@ -73,7 +73,7 @@ export const countdown = [
 ];
 
 export const votes = [
-  {id: "perc1", percentage: 50},
-  {id: "perc1", percentage: 20},
-  {id: "perc1", percentage: 30},
-]
+  { id: "perc1", percentage: 50, desc: "For" },
+  { id: "perc1", percentage: 40, desc: "Against" },
+  { id: "perc1", percentage: 30, desc: "Abstain" },
+];
