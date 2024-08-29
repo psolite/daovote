@@ -1,23 +1,47 @@
+"use client";
+
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Input } from "./ui/Input";
-import { ArrowIcon, Left, Right, FingerPrintIcon } from "@/assets";
+import { ArrowIcon, Left, Right, FingerPrintIcon, GreenIcon, DownloadIcon, CopyIcon } from "@/assets";
 
 interface AllPollsProps {}
 
 const AllPolls: FC<AllPollsProps> = ({}) => {
+  // const [text, setText] = useState('')
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset the copied state after 2 seconds
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   return (
     <section className="pt-[122px] pb-[107px] relative">
       <div className="container mx-auto w-full">
         <div className="flex justify-center">
           <div className="flex flex-col gap-[22px]">
-            <div className="max-w-[520px] card px-[28.5px] pt-[35px] pb-[17px]">
+            <div className="w-[520px] bg-red-500 card pt-[19px]">
               <h3 className="font-extrabold text-[25px] leading-[37.5px] text-white text-center mb-2">Previous Polls</h3>
 
-              <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
-                <div className="flex flex-col gap-[5px] flex-wrap">
-                  <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Title*</p>
-                  <Input className="w-[389px]" type="text" placeholder="eg. DAO Request for Development Proposal " />
+              <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
+                <div className="flex items-center">
+                  <Image src={GreenIcon} alt="green" />
+                  {/* <Input className="w-[389px]" type="text" /> */}
+                  <div className="w">
+                    <span className="">hey</span>
+                    <Image src={CopyIcon} alt="copy" onClick={() => copyToClipboard("hey")} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-medium text-[10px] leading-[15px] text-white">Voters</span>
+                    <span className="font-medium text-[10px] leading-[15px] text-white">Address</span>
+                  </div>
+                  <Image src={DownloadIcon} width={18} height={18} alt="download" />
                 </div>
               </div>
             </div>

@@ -14,7 +14,7 @@ const buttonVariants = cva(
         outline:
           "bg-transparent border-[2px] font-semibold border-secondary rounded-[20px] text-white hover:bg-primary/30 shadow",
         secondary:
-          "bg-white rounded-[5px] text-[20px] font-normal font-monumentExtended leading-[24px] text-black hover:bg-white/70",
+          "bg-white rounded-[10px] text-[15px] font-semibold leading-[22.5px] text-primary hover:bg-white/70",
         ghost: "text-white/80 hover:text-primary",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -24,6 +24,7 @@ const buttonVariants = cva(
         sm: "h-[35px] w-[113.3px] text-[13px] leading-[17.6px] text-white",
         xs: "h-[21.2px] w-[91.6px] text-[12px] leading-[16.2px] text-white",
         lg: "h-[68px] w-[283px] font-semibold text-[20px] leading-[30px] text-white",
+        full: "h-[42px]",
         icon: "h-9 w-9",
       },
     },

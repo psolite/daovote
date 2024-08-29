@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import localFont from "next/font/local";
 import { AOSInit } from "@/components/aos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { cn } from "@/lib/utils";
 
 const poppins = Poppins({ weight: ["800", "600", "500", "400"], subsets: ["latin"] });
+
+const publicPixel = localFont({
+  src: "./fonts/PublicPixel.ttf",
+  variable: "--font-publicPixel",
+});
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <AOSInit />
-      <body className={poppins.className}>
+      <body className={cn(poppins.className, publicPixel.variable)}>
         <Navbar />
         {children}
         <Footer />
