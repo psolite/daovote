@@ -3,7 +3,7 @@
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { BN, Program, web3 } from '@coral-xyz/anchor';
 import { DaoVoting, IDL } from './idl';
-import { error } from 'console';
+// import { error } from 'console';
 
 const network = clusterApiUrl('devnet');
 const connection = new Connection(network, 'confirmed');
@@ -118,7 +118,7 @@ export const vote = async (proposalPublicKey: string, publicKey: string, optionI
         console.log('Serialized Transaction:', serializedTx);
 
         return serializedTx
-    } catch {
+    } catch(error) {
         console.error("Transaction creation failed", error);
         throw new Error("Transaction creation failed");
     }

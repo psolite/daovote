@@ -4,7 +4,11 @@ import { FC } from "react";
 import { Button } from "./ui/Button";
 import { countdown } from "@/constants";
 
-interface VoteProps {}
+interface VoteProps {
+  title: string,
+  description: string,
+  options: string[]
+}
 
 const Vote: FC<VoteProps> = ({}) => {
   return (

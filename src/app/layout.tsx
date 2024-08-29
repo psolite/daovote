@@ -6,6 +6,7 @@ import { AOSInit } from "@/components/aos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
+import AppWalletProvider from "./providers/AppWalletProvider";
 
 const poppins = Poppins({ weight: ["800", "600", "500", "400"], subsets: ["latin"] });
 
@@ -40,9 +41,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <AOSInit />
       <body className={cn(poppins.className, publicPixel.variable)}>
-        <Navbar />
-        {children}
-        <Footer />
+        <AppWalletProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </AppWalletProvider>
       </body>
     </html>
   );
