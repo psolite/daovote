@@ -19,10 +19,9 @@ const config: Config = {
         primary: "#003398",
         secondary: "#ADADAD",
       },
-      // fontFamily: {
-      //   monumentExtended: "var(--font-monumentExtended)",
-      //   satoshi: "var(--font-satoshi)",
-      // },
+      fontFamily: {
+        publicPixel: "var(--font-publicPixel)",
+      },
     },
     // screens: {
     //   sm: "740px",

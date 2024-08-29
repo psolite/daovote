@@ -18,3 +18,17 @@ body {
   background: var(--blue);
   overflow-x: hidden;
 }
+
+.card {
+  border: 1px solid #ffffff;
+  box-shadow: 10px 10px 13px rgba(4, 3, 72, 0.25);
+  border-radius: 30px;
+}
+
+/* rotate fingerprint icon */
+.rotate-left {
+  transform: rotate(15.13deg);
+}
+.rotate-right {
+  transform: rotate(-62deg);
+}
