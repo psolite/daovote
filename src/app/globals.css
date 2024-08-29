@@ -19,6 +19,14 @@ body {
   overflow-x: hidden;
 }
 
+button {
+  transition: ease-in 0.5s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
 .card {
   border: 1px solid #ffffff;
   box-shadow: 10px 10px 13px rgba(4, 3, 72, 0.25);
@@ -31,4 +39,36 @@ body {
 }
 .rotate-right {
   transform: rotate(-62deg);
+}
+
+/* Floating Images */
+.float img {
+  -webkit-animation: movebounce 5s linear infinite;
+  animation: movebounce 5s linear infinite;
+}
+
+/* Animations */
+@keyframes movebounce {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes moveleftbounce {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
