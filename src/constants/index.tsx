@@ -71,3 +71,9 @@ export const countdown = [
   { id: "countdown2", description: "HOURS", value: 18 },
   { id: "countdown3", description: "MIN", value: 45 },
 ];
+
+export const votes = [
+  {id: "perc1", percentage: 50},
+  {id: "perc1", percentage: 20},
+  {id: "perc1", percentage: 30},
+]

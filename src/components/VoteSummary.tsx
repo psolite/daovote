@@ -1,5 +1,5 @@
 import { VoteIcon, Left, Right, FingerPrintIcon, VotedIcon } from "@/assets";
-import { countdown } from "@/constants";
+import { countdown, votes } from "@/constants";
 import Image from "next/image";
 import { FC } from "react";
 import { Button } from "./ui/Button";
@@ -40,15 +40,15 @@ const VoteSummary: FC<VoteSummaryProps> = ({}) => {
               </div>
 
               <div className="flex flex-col gap-[14px]">
-                <Button variant="secondary" size="full">
-                  For
-                </Button>
-                <Button variant="secondary" size="full">
-                  Against
-                </Button>
-                <Button variant="secondary" size="full">
-                  Abstain
-                </Button>
+                {votes.map(({ id, percentage }) => (
+                  <div key={id} className="w-[380px] border rounded-[13px] h-[44px] p-[5px]">
+                    <div style={{ width: `${percentage}%` }} className={`rounded-[10px] bg-white h-full flex items-center`}>
+                      <span className="ml-[11px] font-semibold text-[15px] leading-[22.5px] tracking-[13%] text-primary">
+                        For
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <Image src={VotedIcon} alt="arrow icon" />
