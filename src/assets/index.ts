@@ -17,6 +17,7 @@ import CloseIcon from "./close.svg";
 import VotedCardLogo from "./votedcard.svg";
 import XWhiteLogo from "./xwhite.svg";
 import RightLogo from "./logo2.svg";
+import DscrvLogo from "./dscvr-logo.svg"
 
 export {
   Logo,
@@ -38,4 +39,5 @@ export {
   VotedCardLogo,
   XWhiteLogo,
   RightLogo,
+  DscrvLogo
 };

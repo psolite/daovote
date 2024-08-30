@@ -114,8 +114,9 @@ const CreatePoll: FC<CreateHomePoll> = ({ createProposal }) => {
                   </div>
 
                   <div className="flex flex-col gap-2">
+
                     {!publicKey ?
-                      (iframe ? <Button className="dark:bg-primary dark:text-white" onClick={connectWallet}>Connect Wallet</Button>
+                      (iframe ? <Button variant="outline" onClick={connectWallet}>Create</Button>
                         :
                         <Button variant="outline" onClick={handleWalletConnect} size="lg">
                           Create
@@ -126,7 +127,6 @@ const CreatePoll: FC<CreateHomePoll> = ({ createProposal }) => {
                         Create
                       </Button>
                     }
-
                     <span className="text-[13px] leading-[19.5px] italic text-center text-white">Fee: 0.01 Sol</span>
                   </div>
                 </div>

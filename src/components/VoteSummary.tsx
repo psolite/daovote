@@ -44,21 +44,26 @@ const VoteSummary: FC<VoteSummaryProps> = ({ proposal, countdown = [], closed, p
               </div>
 
               <div className="flex flex-col gap-[14px]">
+
               {proposal.options.map((option, index) => {
                   const widthPercentage = (voteCounts[index] || 0) / totalVotes * 100; // Calculate width percentage safely
                   return (
-                    <div key={index} className="w-[380px] border rounded-[13px] h-[44px] p-[5px]">
+                    <div key={index} className="flex items-center gap-[9px]">
+                      <div className="max-w-[380px] w-full border rounded-[13px] h-[44px] p-[5px]">
                       <div
                         style={{ width: `${widthPercentage}%` }}
                         className="rounded-[10px] bg-white h-full flex items-center"
                       >
                         <span className="ml-[11px] font-semibold text-[15px] leading-[22.5px] tracking-[13%] text-secondary">
-                          {option}({widthPercentage}%)
+                          {option}
                         </span>
                       </div>
+                      </div>
+                      <span className="font-semibold text-[15px] leading-[22.5px] text-white">{`${widthPercentage}%`}</span>
                     </div> 
                   );
                 })}
+
               </div>
             </div>
             <Image src={VotedIcon} alt="arrow icon" />

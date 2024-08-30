@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-primary rounded-[120px] font-bold hover:bg-primary/90 shadow",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "bg-transparent border-[2px] font-semibold border-secondary rounded-[20px] text-white hover:bg-primary/30 shadow",
+          "bg-transparent border-[2px] font-semibold border-white rounded-[20px] text-white hover:bg-primary/30 shadow",
         secondary:
           "bg-white rounded-[10px] text-[15px] font-semibold leading-[22.5px] text-primary hover:bg-white/70",
         vote:
