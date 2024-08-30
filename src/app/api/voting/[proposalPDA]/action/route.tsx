@@ -97,10 +97,14 @@ export const POST = async (req: Request) => {
         }
         const transaction = await vote(proposalPDA, user, +optionIndex)
 
-        const payload: ActionPostResponse = {
-            transaction,
-            message: "You Vote has been Recorded"
-        }
+        
+        const payload: ActionPostResponse = await createPostResponse({
+            fields: {
+              transaction,
+              message: "You Vote has been Recorded"
+            },
+      
+          });
 
         return Response.json(payload, {
             headers,

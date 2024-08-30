@@ -9,14 +9,36 @@ import { Button } from "./ui/Button";
 import { options } from "@/constants";
 import Image from "next/image";
 import { AddIcon, ArrowIcon, FingerPrintIcon, Left, Right } from "@/assets";
+import { handleWalletConnect } from "./WalletAction";
+import { useWallet } from "@solana/wallet-adapter-react";
 
-interface CreatePollProps {}
+interface CreatePollProps {
+    title: string,
+    description: string,
+    options: string[],
+    token: string[],
+    duration: number,
+    token_amount: number[]
+}
 
-const CreatePoll: FC<CreatePollProps> = () => {
+interface CreateHomePoll {
+  createProposal: (
+    title: string,
+    description: string,
+    options: string,
+    // token: string[],
+    duration: number,
+    // token_amount: number[]
+  ) => void
+}
+
+const CreatePoll: FC<CreateHomePoll> = ({createProposal}) => {
+  const { publicKey } = useWallet()
+
   const Schema = yup.object().shape({
-    title: yup.string().required("Title is required"),
-    description: yup.string().required("Description is required"),
-    duration: yup.number().required("Duration is required").min(1, "Duration must be at least 1 hour"),
+    title: yup.string().required(),
+    description: yup.string().required(),
+    duration: yup.number().required(),
   });
 
   const {
@@ -26,21 +48,21 @@ const CreatePoll: FC<CreatePollProps> = () => {
   } = useForm({
     resolver: yupResolver(Schema),
   });
-
-  const [pollOptions, setPollOptions] = useState<string[]>(["Solana"]);
+  
 
   const submitForm = (data: any) => {
+    createProposal(
+      data.title,
+      data.description,
+      data.options,
+      // data.tokenarray,
+      data.duration,
+      // data.amountarray
+    )
     console.log({
-      ...data,
-      session: data.session?.value,
-      term: data.term?.value,
-      options: pollOptions,
+      ...data
     });
-    alert("Submitted!");
-  };
-
-  const addOption = () => {
-    setPollOptions((prevOptions) => [...prevOptions, ""]);
+    // alert("Submitted!");
   };
 
   return (
@@ -55,7 +77,7 @@ const CreatePoll: FC<CreatePollProps> = () => {
                   <div className="flex flex-col gap-[5px] flex-wrap">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Title*</p>
                     <Input className="w-[435px]" type="text" placeholder="e.g., DAO Request for Development Proposal" {...register("title")} />
-                    {errors.title && <p className="text-red-500 text-xs italic">{errors.title.message}</p>}
+                    {errors.title && <p className="text-red-500 text-xs italic">Title is required</p>}
                   </div>
 
                   <div className="flex flex-col gap-[5px] flex-wrap">
@@ -65,41 +87,40 @@ const CreatePoll: FC<CreatePollProps> = () => {
                       {...register("description")}
                       className="min-h-[111px] w-[435px] rounded-[20px] px-[26px] pt-[17px]"
                     />
-                    {errors.description && <p className="text-red-500 text-xs italic">{errors.description.message}</p>}
+                    {errors.description && <p className="text-red-500 text-xs italic">Description is required</p>}
                   </div>
 
                   <div className="flex flex-col gap-[5px] flex-wrap">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Options*</p>
-                    {pollOptions.map((option, index) => (
-                      <div key={index} className="flex items-center gap-[7px]">
-                        <Input
-                          className="w-[435px]"
-                          type="text"
-                          placeholder={`Option ${index + 1}`}
-                          value={option}
-                          onChange={(e) => {
-                            const newOptions = [...pollOptions];
-                            newOptions[index] = e.target.value;
-                            setPollOptions(newOptions);
-                          }}
-                        />
-                        <button type="button" onClick={addOption}>
+                    <Input className="w-[435px]" type="text" placeholder="eg. Solana" {...register("options")} />
+                    {errors.options && <p className="text-red-500 text-xs italic">Options are required</p>}
+                    <ul className="flex items-center justify-center gap-[7px]">
+                      {options.map((item, index) => (
+                        <div key={index} className="flex items-center gap-[7px] px-[8px] rounded-[8px] border text-white">
+                          <span className="">{item}</span>
                           <Image src={AddIcon} alt="add icon" />
-                        </button>
-                      </div>
-                    ))}
+                        </div>
+                      ))}
+                    </ul>
                   </div>
 
                   <div className="flex flex-col gap-[5px] flex-wrap">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Duration*</p>
                     <Input className="w-[435px]" type="number" placeholder="How many hours? e.g., 48" {...register("duration")} />
-                    {errors.duration && <p className="text-red-500 text-xs italic">{errors.duration.message}</p>}
+                    {errors.duration && <p className="text-red-500 text-xs italic">Duration is required</p>}
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <Button variant="outline" size="lg">
-                      Check Result
+                  {!publicKey ?
+                  <Button variant="outline" onClick={handleWalletConnect} size="lg">
+                  Create
+                </Button>
+                  : 
+                  <Button variant="outline" size="lg">
+                      Create
                     </Button>
+                }
+                    
                     <span className="text-[13px] leading-[19.5px] italic text-center text-white">Fee: 0.01 Sol</span>
                   </div>
                 </div>

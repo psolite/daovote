@@ -108,16 +108,16 @@ export const vote = async (proposalPublicKey: string, publicKey: string, optionI
         tx.recentBlockhash = blockhash;
         tx.feePayer = user;
 
-        console.log('Sending transaction...');
+        console.log('Sending transaction...', tx);
 
         // Serialize the transaction
-        const serializedTx = tx.serialize({
-            requireAllSignatures: false,
-            verifySignatures: false,
-        }).toString('base64');
-        console.log('Serialized Transaction:', serializedTx);
+        // const serializedTx = tx.serialize({
+        //     requireAllSignatures: false,
+        //     verifySignatures: false,
+        // }).toString('base64');
+        // console.log('Serialized Transaction:', serializedTx);
 
-        return serializedTx
+        return tx
     } catch(error) {
         console.error("Transaction creation failed", error);
         throw new Error("Transaction creation failed");

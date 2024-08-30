@@ -18,6 +18,7 @@ const config: Config = {
       colors: {
         primary: "#003398",
         secondary: "#ADADAD",
+        tertiary: "#004BE0"
       },
       fontFamily: {
         publicPixel: "var(--font-publicPixel)",

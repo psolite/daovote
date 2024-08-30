@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import AppWalletProvider from "./providers/AppWalletProvider";
+import { CanvasWalletProvider } from "./providers/CanvasWalletProvider";
 
 const poppins = Poppins({ weight: ["800", "600", "500", "400"], subsets: ["latin"] });
 
@@ -23,8 +24,8 @@ export const metadata: Metadata = {
     title: "DAO",
     description: "Create DAO Voting - Powered by Solana",
     type: "website",
-    url: "/",
-    images: "/images/dao6.jpg"
+    url: "http://localhost:3000",
+    images: "http://localhost:3000/images/dao6.jpg"
   },
   other: {
     'dscvr:canvas:version': "vNext",
@@ -42,9 +43,11 @@ export default function RootLayout({
       <AOSInit />
       <body className={cn(poppins.className, publicPixel.variable)}>
         <AppWalletProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <CanvasWalletProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </CanvasWalletProvider>
         </AppWalletProvider>
       </body>
     </html>
