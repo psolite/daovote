@@ -25,13 +25,20 @@ const Navbar: FC<NavbarProps> = ({ }) => {
             {iframe ?
               (walletAddress ? <Button>
                 <Image
-                  src={userInfo?.avatar || walletIcon || ''}
+                  src={`${userInfo?.avatar}`}
                   alt={'wallet'}
                   height={15}
                   width={15}
                   className="mr-2"
                 />
-                ({userInfo?.username} || {walletAddress.slice(0, 3)}...{walletAddress.slice(-3)})
+                <Image
+                  src={`https://images.dscvr.one/assets/08-30-2024/c3d6e03d-3699-442f-bd0c-5a2f7ca098a0.m0gsgsrhv83jkg9ufq9.jpeg`}
+                  alt={'wallet'}
+                  height={15}
+                  width={15}
+                  className="mr-2"
+                />
+                {userInfo?.username}
               </Button>
 
                 :
