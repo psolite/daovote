@@ -1,6 +1,6 @@
 import { createProposal, deriveProposalPDA } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextActionLink } from "@solana/actions";
-import { getCompletedAction } from "../../complete/action/route";
+import { getCompletedAction } from "./completed";
 import { BlinksightsClient } from "blinksights-sdk";
 
 const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');

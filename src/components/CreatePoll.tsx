@@ -41,6 +41,7 @@ const CreatePoll: FC<CreateHomePoll> = ({ createProposal }) => {
     title: yup.string().required(),
     description: yup.string().required(),
     duration: yup.number().required(),
+    options: yup.string().required(),
   });
 
   const {
