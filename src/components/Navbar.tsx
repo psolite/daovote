@@ -31,13 +31,6 @@ const Navbar: FC<NavbarProps> = ({ }) => {
                   width={15}
                   className="mr-2"
                 />
-                <Image
-                  src={`https://images.dscvr.one/assets/08-30-2024/c3d6e03d-3699-442f-bd0c-5a2f7ca098a0.m0gsgsrhv83jkg9ufq9.jpeg`}
-                  alt={'wallet'}
-                  height={15}
-                  width={15}
-                  className="mr-2"
-                />
                 {userInfo?.username}
               </Button>
 
