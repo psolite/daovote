@@ -15,6 +15,9 @@ const nextConfig = {
             },
         ];
     },
+    images: {
+        domains: ['images.dscvr.one'],
+    },
 };
 
 export default nextConfig;
