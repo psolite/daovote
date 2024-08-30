@@ -11,14 +11,15 @@ import Image from "next/image";
 import { AddIcon, ArrowIcon, FingerPrintIcon, Left, Right } from "@/assets";
 import { handleWalletConnect } from "./WalletAction";
 import { useWallet } from "@solana/wallet-adapter-react";
+import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 
 interface CreatePollProps {
-    title: string,
-    description: string,
-    options: string[],
-    token: string[],
-    duration: number,
-    token_amount: number[]
+  title: string,
+  description: string,
+  options: string[],
+  token: string[],
+  duration: number,
+  token_amount: number[]
 }
 
 interface CreateHomePoll {
@@ -32,8 +33,9 @@ interface CreateHomePoll {
   ) => void
 }
 
-const CreatePoll: FC<CreateHomePoll> = ({createProposal}) => {
+const CreatePoll: FC<CreateHomePoll> = ({ createProposal }) => {
   const { publicKey } = useWallet()
+  const { iframe, connectWallet } = useCanvasWallet()
 
   const Schema = yup.object().shape({
     title: yup.string().required(),
@@ -48,7 +50,7 @@ const CreatePoll: FC<CreateHomePoll> = ({createProposal}) => {
   } = useForm({
     resolver: yupResolver(Schema),
   });
-  
+
 
   const submitForm = (data: any) => {
     createProposal(
@@ -92,7 +94,7 @@ const CreatePoll: FC<CreateHomePoll> = ({createProposal}) => {
 
                   <div className="flex flex-col gap-[5px] flex-wrap">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Options*</p>
-                    <Input className="w-[435px]" type="text" placeholder="eg. Solana" {...register("options")} />
+                    <Input className="w-[435px]" type="text" placeholder="eg. Solana,BONK,WEN" {...register("options")} />
                     {errors.options && <p className="text-red-500 text-xs italic">Options are required</p>}
                     <ul className="flex items-center justify-center gap-[7px]">
                       {options.map((item, index) => (
@@ -111,16 +113,19 @@ const CreatePoll: FC<CreateHomePoll> = ({createProposal}) => {
                   </div>
 
                   <div className="flex flex-col gap-2">
-                  {!publicKey ?
-                  <Button variant="outline" onClick={handleWalletConnect} size="lg">
-                  Create
-                </Button>
-                  : 
-                  <Button variant="outline" size="lg">
-                      Create
-                    </Button>
-                }
-                    
+                    {!publicKey ?
+                      (iframe ? <Button className="dark:bg-primary dark:text-white" onClick={connectWallet}>Connect Wallet</Button>
+                        :
+                        <Button variant="outline" onClick={handleWalletConnect} size="lg">
+                          Create
+                        </Button>
+                      )
+                      :
+                      <Button variant="outline" size="lg">
+                        Create
+                      </Button>
+                    }
+
                     <span className="text-[13px] leading-[19.5px] italic text-center text-white">Fee: 0.01 Sol</span>
                   </div>
                 </div>

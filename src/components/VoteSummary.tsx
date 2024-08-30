@@ -1,12 +1,20 @@
 import { VoteIcon, Left, Right, FingerPrintIcon, VotedIcon } from "@/assets";
-import { countdown, votes } from "@/constants";
+// import { countdown, votes } from "@/constants";
 import Image from "next/image";
 import { FC } from "react";
-import { Button } from "./ui/Button";
 
-interface VoteSummaryProps {}
+interface VoteSummaryProps {
+  proposal: { title: string, description: string, options: string[], voteCounts: [] }
+  countdown: { id: string; description: string; value: number; }[] | undefined
+  closed: boolean
+  proposalPDA: string
+}
 
-const VoteSummary: FC<VoteSummaryProps> = ({}) => {
+const VoteSummary: FC<VoteSummaryProps> = ({ proposal, countdown = [], closed, proposalPDA }) => {
+  const voteCounts = proposal.voteCounts
+  const totalVotes = voteCounts.reduce((sum, vote) => sum + +vote, 0); 
+  console.log(totalVotes)
+  
   return (
     <section className="pt-[122px] pb-[107px] relative">
       <div className="container mx-auto w-full">
@@ -25,30 +33,32 @@ const VoteSummary: FC<VoteSummaryProps> = ({}) => {
               ))}
             </div>
             <div className="max-w-[492px] card pt-10 pb-9 px-[37.5px]">
-              <h3 className="font-extrabold text-[18px] leading-[27px] text-white mb-2">DAO Vote Request Development Proposal</h3>
+              <h3 className="font-extrabold text-[18px] leading-[27px] text-white mb-2">{proposal.title}</h3>
 
               <div className="flex flex-col pb-[13px]">
                 <span className="font-medium text-[10px] mb-[2px] leading-[15px] tracking-[13%] text-white">DISCRIPTION</span>
                 <p className="font-medium text-[15px] leading-[22.5px] text-white max-w-[417px] mb-[15px]">
-                  This proposal suggests the development of a decentralized voting platform designed to facilitate transparent and
-                  tamper-proof community decision-making. Utilizing blockchain technology, the platform will ensure that votes are
-                  recorded securely and anonymously, preventing fraud and manipulation. The system will be user-friendly and
-                  accessible, enabling community members to participate in governance and key decisions with confidence in the
-                  integrity of the voting process.
+                  {proposal.description}
                 </p>
                 <Image src={VoteIcon} alt="votes" />
               </div>
 
               <div className="flex flex-col gap-[14px]">
-                {votes.map(({ id, percentage, desc }) => (
-                  <div key={id} className="w-[380px] border rounded-[13px] h-[44px] p-[5px]">
-                    <div style={{ width: `${percentage}%` }} className={`rounded-[10px] bg-white h-full flex items-center`}>
-                      <span className="ml-[11px] font-semibold text-[15px] leading-[22.5px] tracking-[13%] text-primary">
-                        {desc}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              {proposal.options.map((option, index) => {
+                  const widthPercentage = (voteCounts[index] || 0) / totalVotes * 100; // Calculate width percentage safely
+                  return (
+                    <div key={index} className="w-[380px] border rounded-[13px] h-[44px] p-[5px]">
+                      <div
+                        style={{ width: `${widthPercentage}%` }}
+                        className="rounded-[10px] bg-white h-full flex items-center"
+                      >
+                        <span className="ml-[11px] font-semibold text-[15px] leading-[22.5px] tracking-[13%] text-secondary">
+                          {option}({widthPercentage}%)
+                        </span>
+                      </div>
+                    </div> 
+                  );
+                })}
               </div>
             </div>
             <Image src={VotedIcon} alt="arrow icon" />

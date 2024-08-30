@@ -3,6 +3,7 @@
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { BN, Program, web3 } from '@coral-xyz/anchor';
 import { DaoVoting, IDL } from './idl';
+import { link } from 'fs';
 // import { error } from 'console';
 
 const network = clusterApiUrl('devnet');
@@ -88,11 +89,12 @@ export const createProposal = async (title: string, description: string, options
     }
 };
 
-export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {console.log(publicKey, proposalPublicKey)
+export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {
+    console.log(publicKey, proposalPublicKey)
     const user = new PublicKey(publicKey)
     const proposalPDA = new PublicKey(proposalPublicKey)
     const { voterPDA } = await deriveVoterPDA(user, proposalPDA)
-    
+
     try {
         const tx = await program.methods.vote(optionIndex)
             .accounts({
@@ -118,37 +120,55 @@ export const vote = async (proposalPublicKey: string, publicKey: string, optionI
         // console.log('Serialized Transaction:', serializedTx);
 
         return tx
-    } catch(error) {
+    } catch (error) {
         console.error("Transaction creation failed", error);
         throw new Error("Transaction creation failed");
     }
 }
 
-// export const cProposal = async () => {
-//     const allProposal = await program.account.proposal.all();
+export const AllProposal = async () => {
+    const allProposal = await program.account.proposal.all();
 
-//     const proposals = allProposal.map((proposal) => {
+    const proposals = allProposal.map((proposal) => {
 
-//         const optionsWithVoteCounts = proposal.account.options.map((option, index) => {
-//             const voteCount = proposal.account.voteCounts[index];
-//             return `${option.toString()}: ${voteCount.toString()}`;
-//         });
-//         const tokenWithamount = proposal.account.token.map((token, index) => {
-//             const amount = proposal.account.voteCounts[index];
-//             return `${token.toString()}: ${amount.toString()}`;
-//         });
+        const optionsWithVoteCounts = proposal.account.options.map((option, index) => {
+            const voteCount = proposal.account.voteCounts[index];
+            return `${option.toString()}: ${voteCount.toString()}`;
+        });
+        const tokenWithamount = proposal.account.token.map((token, index) => {
+            const amount = proposal.account.voteCounts[index];
+            return `${token.toString()}: ${amount.toString()}`;
+        });
+        // const Isactive = 
+        const now = Date.now()
+        let Isactive = true;
 
-//         return {
-//             title: proposal.account.title.toString(),
-//             description: proposal.account.description.toString(),
-//             optionsWithVoteCounts,
-//             createdAt: proposal.account.createdAt.toString(),
-//             duration: proposal.account.duration.toString(),
-//             tokenWithamount
-//         }
-//     });
-//     console.log(proposals)
-// }
+        // Convert proposal.createdAt from seconds to milliseconds
+        const createdAtInMillis = proposal.account.createdAt * 1000;
+        const durationInMillis = proposal.account.duration * 1000;
+
+        // Calculate the closing time by adding duration to the creation time
+        const closingTime = createdAtInMillis + durationInMillis;
+
+        if (now >= +closingTime) {
+            Isactive = false
+        }
+
+        return {
+            id: proposal.publicKey,
+            title: proposal.account.title.toString(),
+            description: proposal.account.description.toString(),
+            optionsWithVoteCounts,
+            createdAt: proposal.account.createdAt.toString(),
+            duration: proposal.account.duration.toString(),
+            tokenWithamount,
+            link: `http://daovote.fun/vote/${proposal.publicKey}`,
+            status: Isactive
+        }
+    });
+    return proposals
+    console.log(proposals)
+}
 
 export const findOneProposal = async (proposalPDA: string) => {
     return await program.account.proposal.fetch(proposalPDA);

@@ -5,6 +5,7 @@ import { Button } from "./ui/Button";
 import { HasVoted, vote } from "@/anchor/setup";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { handleWalletConnect } from "./WalletAction";
+import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 
 interface VoteProps {
   proposal: { title: string, description: string, options: string[] }
@@ -16,6 +17,7 @@ interface VoteProps {
 const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet()
+  const { iframe, connectWallet } = useCanvasWallet()
   const [userHasVoted, setuUserHasVoted] = useState<boolean>()
 
   useEffect(() => {
@@ -69,12 +71,9 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
               </div>
 
               <div className="flex flex-col gap-[14px]">
-                {!publicKey ?
-                  <Button variant="secondary" onClick={handleWalletConnect} size="full">
-                    Connect wallet
-                  </Button>
-                  : proposal.options.map((option, index) => (
-                    <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={handleClick(index)} size="full">
+                {
+                  proposal.options.map((option, index) => (
+                    <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={!publicKey ? (iframe ? connectWallet : handleWalletConnect) : handleClick(index)} size="full">
                       {option}
                     </Button>
                   ))

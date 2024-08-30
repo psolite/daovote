@@ -1,15 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Input } from "./ui/Input";
 import { ArrowIcon, Left, Right, FingerPrintIcon, GreenIcon, DownloadIcon, CopyIcon, GrayIcon } from "@/assets";
-import { allPolls } from "@/constants";
+// import { allPolls } from "@/constants";
 import Link from "next/link";
 
-interface AllPollsProps {}
 
-const AllPolls: FC<AllPollsProps> = ({}) => {
+interface AllPollsProps {
+  allPolls: {
+    id: string,
+    title: string,
+    date: string,
+    link: string,
+    status: boolean,
+  }[],
+}
+
+const AllPolls: FC<AllPollsProps> = ({allPolls = []}) => {
   // const [text, setText] = useState('')
   const [copied, setCopied] = useState(false);
 
@@ -33,7 +42,7 @@ const AllPolls: FC<AllPollsProps> = ({}) => {
               <div className="flex flex-col gap-[11px]">
                 {allPolls.map(({ id, title, date, link, status }) => (
                   <div key={id} className="flex items-center gap-[9px] pl-[25px]">
-                    <Image src={status === "active" ? GreenIcon : GrayIcon} alt="green" />
+                    <Image src={status === true ? GreenIcon : GrayIcon} alt="green" />
                     <div className="h-[54px] w-full max-w-[389px] rounded-[20px] bg-white pl-[26px] pr-[21px] flex flex-col gap-[2px] pt-[6px]">
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-[9px] italic leading-[13.5px] text-tertiary/70">{`TITLE: ${title}`}</span>
@@ -43,7 +52,7 @@ const AllPolls: FC<AllPollsProps> = ({}) => {
                         <Link href={link}>
                           <span
                             className={`font-medium text-[13px] italic leading-[19.5px] ${
-                              status === "active" ? "text-red-500" : "text-tertiary"
+                              status === true ? "text-red-500" : "text-tertiary"
                             }`}
                           >
                             {link}
