@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import AppWalletProvider from "./providers/AppWalletProvider";
 import { CanvasWalletProvider } from "./providers/CanvasWalletProvider";
+import CanvasContainer from "./providers/CanvasContainer";
 
 const poppins = Poppins({ weight: ["800", "600", "500", "400"], subsets: ["latin"] });
 
@@ -43,9 +44,11 @@ export default function RootLayout({
       <AOSInit />
       <body className={cn(poppins.className, publicPixel.variable)}>
         <AppWalletProvider>
-          <CanvasWalletProvider>
+          <CanvasWalletProvider>            
             <Navbar />
+            <CanvasContainer>
             {children}
+            </CanvasContainer>
             <Footer />
           </CanvasWalletProvider>
         </AppWalletProvider>
