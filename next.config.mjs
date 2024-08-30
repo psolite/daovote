@@ -16,7 +16,7 @@ const nextConfig = {
         ];
     },
     images: {
-        domains: ['images.dscvr.one'],
+        domains: ['images.dscvr.one','ipfs.dscvr.one'],
     },
 };
 
