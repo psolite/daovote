@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { FC, useState } from "react";
-import { Input } from "./ui/Input";
 import { ArrowIcon, Left, Right, FingerPrintIcon, GreenIcon, DownloadIcon, CopyIcon, GrayIcon } from "@/assets";
 import { allPolls } from "@/constants";
 import Link from "next/link";
@@ -10,7 +9,6 @@ import Link from "next/link";
 interface AllPollsProps {}
 
 const AllPolls: FC<AllPollsProps> = ({}) => {
-  // const [text, setText] = useState('')
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (text: string) => {
@@ -27,14 +25,14 @@ const AllPolls: FC<AllPollsProps> = ({}) => {
     <section className="pt-[122px] pb-[107px] relative">
       <div className="container mx-auto w-full">
         <div className="flex justify-center">
-          <div className="flex flex-col gap-[22px]">
-            <div className="w-[520px] card pt-[19px] pb-[34px]">
+          <div className="flex flex-col gap-[22px] w-full max-w-[520px]">
+            <div className="w-full card pt-[19px] pb-[34px] h-[685px] overflow-y-auto overflow-x-hidden scrollbar-hide">
               <h3 className="font-extrabold text-[25px] leading-[37.5px] text-white text-center mb-2">Previous Polls</h3>
-              <div className="flex flex-col gap-[11px]">
+              <div className="flex flex-col gap-[11px] w-full">
                 {allPolls.map(({ id, title, date, link, status }) => (
-                  <div key={id} className="flex items-center gap-[9px] pl-[25px]">
+                  <div key={id} className="flex items-center gap-[9px] pl-[25px] pr-[14px]">
                     <Image src={status === "active" ? GreenIcon : GrayIcon} alt="green" />
-                    <div className="h-[54px] w-full max-w-[389px] rounded-[20px] bg-white pl-[26px] pr-[21px] flex flex-col gap-[2px] pt-[6px]">
+                    <div className="h-[54px] w-full max-w-[389px] rounded-[20px] bg-white px-[21px] flex flex-col gap-[2px] pt-[6px]">
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-[9px] italic leading-[13.5px] text-tertiary/70">{`TITLE: ${title}`}</span>
                         <span className="font-medium text-[9px] italic leading-[13.5px] text-tertiary/70">{date}</span>
@@ -46,19 +44,23 @@ const AllPolls: FC<AllPollsProps> = ({}) => {
                               status === "active" ? "text-red-500" : "text-tertiary"
                             }`}
                           >
-                            {link}
+                            {link.length > 30 ? link.substring(0, 43) + "..." : link}
                           </span>{" "}
                         </Link>
                         <Image src={CopyIcon} className="cursor-pointer" alt="copy" onClick={() => copyToClipboard("hey")} />
                       </div>
                     </div>
-                    <div className="flex items-center gap-[4px]">
-                      <div className="flex flex-col">
-                        <span className="font-medium text-[10px] leading-[15px] text-white">Voters</span>
-                        <span className="font-medium text-[10px] leading-[15px] text-white">Address</span>
+                    {status === "active" ? (
+                      ""
+                    ) : (
+                      <div className="flex items-center gap-[4px] flex-shrink-0">
+                        <div className="flex flex-col">
+                          <span className="font-medium text-[10px] leading-[15px] text-white">Voters</span>
+                          <span className="font-medium text-[10px] leading-[15px] text-white">Address</span>
+                        </div>
+                        <Image src={DownloadIcon} className="cursor-pointer" width={18} height={18} alt="download" />
                       </div>
-                      <Image src={DownloadIcon} className="cursor-pointer" width={18} height={18} alt="download" />
-                    </div>
+                    )}
                   </div>
                 ))}
               </div>

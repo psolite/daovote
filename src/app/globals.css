@@ -27,6 +27,16 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .card {
   border: 1px solid #ffffff;
   box-shadow: 10px 10px 13px rgba(4, 3, 72, 0.25);
@@ -72,3 +82,4 @@ button:hover {
     transform: translateX(0);
   }
 }
+

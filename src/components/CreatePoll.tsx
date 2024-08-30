@@ -82,7 +82,7 @@ const CreatePoll: FC<CreatePollProps> = ({}) => {
                   </div>
                   <div className="flex flex-col gap-2">
                     <Button variant="outline" size="lg">
-                      Check Result
+                      Submit
                     </Button>
                     <span className="text-[13px] leading-[19.5px] italic text-center text-white">Fee: 0.01 Sol</span>
                   </div>

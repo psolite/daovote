@@ -41,12 +41,15 @@ const VoteSummary: FC<VoteSummaryProps> = ({}) => {
 
               <div className="flex flex-col gap-[14px]">
                 {votes.map(({ id, percentage, desc }) => (
-                  <div key={id} className="w-[380px] border rounded-[13px] h-[44px] p-[5px]">
-                    <div style={{ width: `${percentage}%` }} className={`rounded-[10px] bg-white h-full flex items-center`}>
-                      <span className="ml-[11px] font-semibold text-[15px] leading-[22.5px] tracking-[13%] text-primary">
-                        {desc}
-                      </span>
+                  <div key={id} className="flex items-center gap-[9px]">
+                    <div className="max-w-[380px] w-full border rounded-[13px] h-[44px] p-[5px]">
+                      <div style={{ width: `${percentage}%` }} className={`rounded-[10px] bg-white h-full flex items-center`}>
+                        <span className="ml-[11px] font-semibold text-[15px] leading-[22.5px] tracking-[13%] text-primary">
+                          {desc}
+                        </span>
+                      </div>
                     </div>
+                    <span className="font-semibold text-[15px] leading-[22.5px] text-white">{`${percentage}%`}</span>
                   </div>
                 ))}
               </div>
