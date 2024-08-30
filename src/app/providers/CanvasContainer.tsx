@@ -31,8 +31,13 @@ export default function CanvasContainer({ children }: { children: ReactNode }) {
   }, [iframe]); // Add iframe as a dependency
 
   return (
-    <main ref={containerRef} className="min-h-screen">
-      {children}
-    </main>
+    <div className="relative min-h-screen">
+      <main ref={containerRef} className="flex-grow">
+        {children}
+      </main>
+    </div>
+    // <main ref={containerRef} className="min-h-screen">
+    //   {children}
+    // </main>
   );
 }
