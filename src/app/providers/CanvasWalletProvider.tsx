@@ -55,6 +55,14 @@ export const CanvasWalletProvider = ({ children }: { children: ReactNode }) => {
     const connectWallet = async () => {
         if (canvasClient) {
             try {
+                const info = await canvasClient.ready();
+                if (info?.untrusted) {
+                    const { user, content } = info.untrusted;
+                    setUserInfo(user);
+                    setContent(content);
+                } else {
+                    console.error('Failed to retrieve user information');
+                }
                 await canvasClient.ready();
                 console.log("CanvasClient is ready");
 
@@ -64,14 +72,8 @@ export const CanvasWalletProvider = ({ children }: { children: ReactNode }) => {
                     setWalletAddress(response.untrusted.address);
                     setWalletIcon(response.untrusted.walletIcon);
                     console.log('Wallet connected:', response.untrusted.address);
-                    const info = await canvasClient.ready();
-                    if (info?.untrusted) {
-                        const { user, content } = info.untrusted;
-                        setUserInfo(user);
-                        setContent(content);
-                    } else {
-                        console.error('Failed to retrieve user information');
-                    }
+
+
                 } else {
                     console.error('Failed to connect wallet');
                 }
