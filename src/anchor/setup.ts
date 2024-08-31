@@ -8,7 +8,7 @@ import { link } from 'fs';
 
 const network = clusterApiUrl('devnet');
 const connection = new Connection(network, 'confirmed');
-const programID = new PublicKey('tydvPhKqpNFNqkx78LNocANNtVyJs7ba3czkcoWB3RJ');
+const programID = new PublicKey('dAo8nCHebC5n737hY7iKvYbqnJZK9BDQURsddiT2Q7Q');
 
 export const program = new Program<DaoVoting>(IDL, programID, {
     connection

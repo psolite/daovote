@@ -51,7 +51,7 @@ export const GET = async (req: Request) => {
     }));
 
     //   console.log(proposal.options,proposal.options.length, "66666666666666666666666666666666666666666")
-    const payload: ActionGetResponse = client.createActionGetResponseV1(req.url, {
+    const payload: ActionGetResponse = await client.createActionGetResponseV1(req.url, {
         title: proposal.title,
         icon: new URL("/image/dao4.jpg", new URL(req.url).origin).toString(),
         description: `${proposal.description}\n${timeleft}`,

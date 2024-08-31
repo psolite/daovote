@@ -7,7 +7,7 @@ const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf90
 const headers = createActionHeaders();
 
 export const GET = async (req: Request) => {
-  const payload: ActionGetResponse = client.createActionGetResponseV1(req.url, {
+  const payload: ActionGetResponse = await client.createActionGetResponseV1(req.url, {
     title: "Create a Poll",
     icon: new URL("/image/dao5.jpg", new URL(req.url).origin).toString(),
     description: `Transparent and tamper-proof community decision making`,

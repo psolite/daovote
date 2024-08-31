@@ -13,10 +13,10 @@ const Footer: FC<FooterProps> = ({}) => {
           <Image src={Check} alt="check icon" />
           <span className="text-[30px] leading-[45px] font-extrabold text-secondary">DAO VOTING POLL</span>
           <div className="flex items-center gap-[6px]">
-            <Link href="https://x.com">
+            <Link href="https://x.com/daovote_fun">
               <Image src={Twitter} alt="twitter icon" />
             </Link>
-            <Link href="https://x.com">
+            <Link href="https://dscvr.one/p/daovotefun">
               <Image src={DscrvLogo} alt="dccrv icon" />
             </Link>
           </div>
