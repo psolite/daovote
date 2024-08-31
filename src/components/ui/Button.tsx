@@ -28,7 +28,7 @@ const buttonVariants = cva(
         lg: "h-[68px] w-[283px] font-semibold text-[20px] leading-[30px] text-white",
         full: "h-[42px]",
         vote: "h-[46px] w-[166px] text-[20px] font-semibold leading-[30px] text-white",
-        icon: "h-9 w-9",
+        icon: "h-[46px] w-[63px]",
       },
     },
     defaultVariants: {

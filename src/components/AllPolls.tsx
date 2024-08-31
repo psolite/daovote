@@ -47,7 +47,7 @@ const AllPolls: FC<AllPollsProps> = ({}) => {
                             {link.length > 30 ? link.substring(0, 43) + "..." : link}
                           </span>{" "}
                         </Link>
-                        <Image src={CopyIcon} className="cursor-pointer" alt="copy" onClick={() => copyToClipboard("hey")} />
+                        <Image src={CopyIcon} className="cursor-pointer" alt="copy" onClick={() => copyToClipboard(link)} />
                       </div>
                     </div>
                     {status === "active" ? (

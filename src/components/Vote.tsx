@@ -1,12 +1,22 @@
+"use client";
+
 import { FingerPrintIcon, Left, Right, VoteIcon } from "@/assets";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Button } from "./ui/Button";
 import { countdown } from "@/constants";
+import VotedCard from "./VotedCard";
 
 interface VoteProps {}
 
 const Vote: FC<VoteProps> = ({}) => {
+  const [hasVoted, setHasVoted] = useState(false);
+
+  const vote = (vote: string) => {
+    setHasVoted(true);
+    console.log("successfully voted: ", vote);
+  };
+
   return (
     <section className="pt-[122px] pb-[107px] relative">
       <div className="container mx-auto w-full">
@@ -40,13 +50,13 @@ const Vote: FC<VoteProps> = ({}) => {
               </div>
 
               <div className="flex flex-col gap-[14px]">
-                <Button variant="secondary" size="full">
+                <Button variant="secondary" size="full" onClick={() => vote("for")}>
                   For
                 </Button>
-                <Button variant="secondary" size="full">
+                <Button variant="secondary" size="full" onClick={() => vote("against")}>
                   Against
                 </Button>
-                <Button variant="secondary" size="full">
+                <Button variant="secondary" size="full" onClick={() => vote("abstain")}>
                   Abstain
                 </Button>
               </div>
@@ -74,6 +84,14 @@ const Vote: FC<VoteProps> = ({}) => {
         alt="fingerprint icon"
         className="hidden lg:block absolute -bottom-[1%] -right-[1%] rotate-right"
       />
+
+      {/* Voted Modal */}
+
+      {hasVoted && (
+        <div className="fixed inset-0 bg-primary/80 bg-opacity-50 flex items-center justify-center z-50">
+          <VotedCard onClose={setHasVoted} />
+        </div>
+      )}
     </section>
   );
 };

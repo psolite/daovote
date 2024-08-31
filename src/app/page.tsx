@@ -1,6 +1,7 @@
 import AllPolls from "@/components/AllPolls";
 import CreatePoll from "@/components/CreatePoll";
 import Hero from "@/components/Hero";
+import ShareCard from "@/components/ShareCard";
 import Vote from "@/components/Vote";
 import VotedCard from "@/components/VotedCard";
 import VoteSummary from "@/components/VoteSummary";
@@ -10,11 +11,12 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {/* <Hero /> */}
-      {/* <CreatePoll /> */}
-      <AllPolls />
+      <CreatePoll />
+      {/* <AllPolls /> */}
       {/* <Vote /> */}
       {/* <VoteSummary /> */}
       {/* <VotedCard /> */}
+      {/* <ShareCard /> */}
     </main>
   );
 }
