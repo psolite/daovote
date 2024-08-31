@@ -7,11 +7,11 @@ export const GET = async (req: Request) => {
       // Map all root level routes to an action
       {
         pathPattern: "/",
-        apiPath: `http://localhost:3000/api/create/action`,
+        apiPath: `${process.env.NEXT_PUBLIC_URL}/api/create/action`,
       },
       {
         pathPattern: "/vote/*",
-        apiPath: `http://localhost:3000/api/vote/*/action`,
+        apiPath: `${process.env.NEXT_PUBLIC_URL}/api/vote/*/action`,
       },
      
     ],
