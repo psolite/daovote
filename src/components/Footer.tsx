@@ -11,7 +11,7 @@ const Footer: FC<FooterProps> = ({}) => {
       <div className="container mx-auto max-w-6xl w-full">
         <div className="flex items-center justify-between h-[65px]">
           <Image src={Check} alt="check icon" />
-          <span className="text-[30px] leading-[45px] font-extrabold text-secondary">DAO VOTING POLL</span>
+          <span className="text-[15px] md:text-[30px] leading-[22.5px] md:leading-[45px] font-extrabold text-secondary">DAO VOTING POLL</span>
           <div className="flex items-center gap-[6px]">
             <Link href="https://x.com">
               <Image src={Twitter} alt="twitter icon" />

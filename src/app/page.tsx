@@ -11,8 +11,8 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {/* <Hero /> */}
-      <CreatePoll />
-      {/* <AllPolls /> */}
+      {/* <CreatePoll /> */}
+      <AllPolls />
       {/* <Vote /> */}
       {/* <VoteSummary /> */}
       {/* <VotedCard /> */}

@@ -32,22 +32,22 @@ const AllPolls: FC<AllPollsProps> = ({}) => {
                 {allPolls.map(({ id, title, date, link, status }) => (
                   <div key={id} className="flex items-center gap-[9px] pl-[25px] pr-[14px]">
                     <Image src={status === "active" ? GreenIcon : GrayIcon} alt="green" />
-                    <div className="h-[54px] w-full max-w-[389px] rounded-[20px] bg-white px-[21px] flex flex-col gap-[2px] pt-[6px]">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-[9px] italic leading-[13.5px] text-tertiary/70">{`TITLE: ${title}`}</span>
-                        <span className="font-medium text-[9px] italic leading-[13.5px] text-tertiary/70">{date}</span>
+                    <div className="h-auto max-h-[54px] w-full max-w-[389px] rounded-[20px] bg-white px-3 sm:px-[21px] flex flex-col gap-[2px] py-2 sm:pt-[6px]">
+                      <div className="flex items-center justify-between flex-wrap">
+                        <span className="font-medium text-[8px] sm:text-[9px] italic leading-[13.5px] text-tertiary/70">{`TITLE: ${title}`}</span>
+                        <span className="font-medium text-[8px] sm:text-[9px] italic leading-[13.5px] text-tertiary/70">{date}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <Link href={link}>
+                      <div className="flex items-center justify-between flex-wrap">
+                        <Link href={link} className="max-w-[calc(100%-24px)]">
                           <span
-                            className={`font-medium text-[13px] italic leading-[19.5px] ${
+                            className={`font-medium text-[11px] sm:text-[13px] italic leading-[19.5px] ${
                               status === "active" ? "text-red-500" : "text-tertiary"
-                            }`}
+                            } break-all`}
                           >
-                            {link.length > 30 ? link.substring(0, 43) + "..." : link}
-                          </span>{" "}
+                            {link.length > 30 ? link.substring(0, 30) + "..." : link}
+                          </span>
                         </Link>
-                        <Image src={CopyIcon} className="cursor-pointer" alt="copy" onClick={() => copyToClipboard(link)} />
+                        <Image src={CopyIcon} className="cursor-pointer w-5 h-5 sm:w-6 sm:h-6" alt="copy" onClick={() => copyToClipboard(link)} />
                       </div>
                     </div>
                     {status === "active" ? (
