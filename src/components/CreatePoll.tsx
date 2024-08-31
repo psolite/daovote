@@ -45,7 +45,7 @@ const CreatePoll = () => {
       title: '',
       description: '',
       options: '',
-      duration: yup.number,
+      duration: undefined
     }
   });
 
