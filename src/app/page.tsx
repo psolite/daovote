@@ -1,7 +1,6 @@
 import AllPolls from "@/components/AllPolls";
 import CreatePoll from "@/components/CreatePoll";
 import Hero from "@/components/Hero";
-import CreateHomePoll from "@/components/Home";
 import ShareCard from "@/components/ShareCard";
 import Vote from "@/components/Vote";
 import VotedCard from "@/components/VotedCard";
@@ -13,7 +12,7 @@ export default function Home() {
 
     <>
       {/* <Hero /> */}
-      <CreateHomePoll />
+      <CreatePoll />
       {/* <VotedCard />
       <ShareCard /> */}
       {/* <AllPolls /> */}

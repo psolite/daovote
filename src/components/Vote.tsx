@@ -1,4 +1,6 @@
-import { FingerPrintIcon, Left, Right, VoteIcon } from "@/assets";
+"use client";
+
+import { ArrowIcon, FingerPrintIcon, Left, Right, VoteIcon } from "@/assets";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { Button } from "./ui/Button";
@@ -6,6 +8,9 @@ import { HasVoted, vote } from "@/anchor/setup";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { handleWalletConnect } from "./WalletAction";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
+import VotedCard from "./VotedCard";
+import Link from "next/link";
+import { PublicKey } from "@solana/web3.js";
 
 interface VoteProps {
   proposal: { title: string, description: string, options: string[] }
@@ -16,28 +21,57 @@ interface VoteProps {
 
 const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) => {
   const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet()
-  const { iframe, connectWallet } = useCanvasWallet()
-  const [userHasVoted, setuUserHasVoted] = useState<boolean>()
+  let { publicKey, sendTransaction } = useWallet()
+  const { iframe, connectWallet, walletAddress, signTransaction } = useCanvasWallet()
+  const [userHasVoted, setUserHasVoted] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [success, setSuccess] = useState<boolean>(false)
 
   useEffect(() => {
     const voted = async () => {
+
+      if (walletAddress) {
+        publicKey = new PublicKey(walletAddress);
+      }
       if (!publicKey) { return }
       const userHasVoted = await HasVoted(proposalPDA, publicKey.toBase58())
-      setuUserHasVoted(userHasVoted)
+
+      setUserHasVoted(userHasVoted)
+
     }
     voted()
-  }, [publicKey])
+  }, [publicKey,success])
 
   // Handler for button click animations
   const handleClick = (index: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (!publicKey) { return }
-    const transaction = await vote(proposalPDA, publicKey?.toBase58(), index)
+    try {
+      setLoading(true)
+      if (!publicKey) { return }
+      const transaction = await vote(proposalPDA, publicKey?.toBase58(), index)
 
-    const trxSignature = await sendTransaction(transaction, connection, { signers: [] });
-    // Remove the class after animation duration (e.g., 300ms)
-    console.log(`Vote transaction sent: ${trxSignature}`);
+      let trxSignature;
+      let confirmation;
+      if (walletAddress) {
+        trxSignature = await signTransaction(transaction);
+        if (trxSignature) {
+          setSuccess(true)
+        }
+      } else {
+        trxSignature = await sendTransaction(transaction, connection, { signers: [] });
+        confirmation = await connection.confirmTransaction(trxSignature, 'confirmed');
+        console.log('Transaction confirmed:', confirmation);
+        if (confirmation.value.err === null) {
+          setSuccess(true)
+        }
+      }
+      // Remove the class after animation duration (e.g., 300ms)
+      console.log(`Vote transaction sent: ${trxSignature}`);
+    } catch {
+      alert("Transaction Error")
+    } finally {
+      setLoading(false)
+    }
   };
 
 
@@ -65,7 +99,7 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
                 <span className="font-medium text-[10px] mb-[2px] leading-[15px] tracking-[13%] text-white">DISCRIPTION</span>
                 <p className="font-medium text-[15px] leading-[22.5px] text-white max-w-[417px] mb-[15px]">{proposal.description}
                 </p>
-                <p className="font-medium text-[15px] leading-[22.5px] text-secondary max-w-[417px] mb-[15px]">{userHasVoted ? "You have voted in the poll" : ""}
+                <p className="font-medium text-[15px] leading-[22.5px] text-secondary max-w-[417px] mb-[15px]">{userHasVoted ? "You have voted in this poll" : ""}
                 </p>
                 <Image src={VoteIcon} alt="votes" />
               </div>
@@ -80,6 +114,12 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
                 }
 
               </div>
+            </div>
+            <div className="flex items-center gap-[5px]">
+              <span className="font-semibold text-[20px] leading-[30px] text-white">View Result</span>
+              <Link href={`${process.env.NEXT_PUBLIC_URL}/vote/${proposalPDA}/result`} >
+                <Image src={ArrowIcon} alt="arrow icon" />
+              </Link>
             </div>
           </div>
         </div>
@@ -104,6 +144,14 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
         alt="fingerprint icon"
         className="hidden lg:block absolute -bottom-[1%] -right-[1%] rotate-right"
       />
+
+      {/* Voted Modal */}
+
+      {success && (
+        <div className="fixed inset-0 bg-primary/80 bg-opacity-50 flex items-center justify-center z-50">
+          <VotedCard onClose={setSuccess} />
+        </div>
+      )}
     </section>
   );
 };

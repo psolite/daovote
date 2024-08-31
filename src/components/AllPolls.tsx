@@ -16,7 +16,7 @@ interface AllPollsProps {
   }[],
 }
 
-const AllPolls: FC<AllPollsProps> = ({allPolls = []}) => {
+const AllPolls: FC<AllPollsProps> = ({ allPolls = [] }) => {
   // const [text, setText] = useState('')
 
   const [copied, setCopied] = useState(false);
@@ -51,9 +51,8 @@ const AllPolls: FC<AllPollsProps> = ({allPolls = []}) => {
                       <div className="flex items-center justify-between">
                         <Link href={link}>
                           <span
-                            className={`font-medium text-[13px] italic leading-[19.5px] ${
-                              status === true ? "text-red-500" : "text-tertiary"
-                            }`}
+                            className={`font-medium text-[13px] italic leading-[19.5px] ${status === true ? "text-red-500" : "text-tertiary"
+                              }`}
                           >
                             {link.length > 30 ? link.substring(0, 40) + "..." : link}
                           </span>{" "}
@@ -78,7 +77,9 @@ const AllPolls: FC<AllPollsProps> = ({allPolls = []}) => {
             </div>
             <div className="flex items-center gap-[5px]">
               <span className="font-semibold text-[20px] leading-[30px] text-white">Create a Poll</span>
-              <Image src={ArrowIcon} alt="arrow icon" />
+              <Link href={`${process.env.NEXT_PUBLIC_URL}`} >
+                <Image src={ArrowIcon} alt="arrow icon" />
+              </Link>
             </div>
           </div>
         </div>
