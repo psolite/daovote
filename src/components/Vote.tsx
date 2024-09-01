@@ -107,7 +107,7 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
               <div className="flex flex-col gap-[14px]">
                 {
                   proposal.options.map((option, index) => (
-                    <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={!publicKey ? (iframe ? connectWallet : handleWalletConnect) : handleClick(index)} size="full">
+                    <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={publicKey || walletAddress  ? handleClick(index) : (iframe ? connectWallet : handleWalletConnect) } size="full">
                       {option}
                     </Button>
                   ))

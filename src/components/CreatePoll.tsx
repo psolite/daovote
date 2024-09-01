@@ -15,6 +15,7 @@ import { useState } from "react";
 import ShareCard from "./ShareCard";
 import { PollTx } from "./PollTx";
 import Link from "next/link";
+import { handleWalletConnect } from "./WalletAction";
 
 
 
@@ -25,7 +26,7 @@ const CreatePoll = () => {
   const [shareCardData, setShareCardData] = useState<any>();
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
-  const { walletAddress, signTransaction } = useCanvasWallet();
+  const { walletAddress, signTransaction, connectWallet, iframe } = useCanvasWallet();
 
   const Schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -133,9 +134,21 @@ const CreatePoll = () => {
                     {errors.duration && <p className="text-red-500 text-xs italic">{errors.duration.message}</p>}
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Button variant="outline" size="lg" type="submit">
-                      Submit
-                    </Button>
+                    {publicKey || walletAddress ?
+
+                      <Button variant="outline" size="lg" type="submit">
+                        Submit
+                      </Button>
+                      :
+                      (iframe ? <Button variant="outline" size="lg" onClick={connectWallet}>Create</Button>
+                        :
+                        <Button variant="outline" onClick={handleWalletConnect} size="lg">
+                          Create
+                        </Button>
+                      )
+
+                    }
+
                     <span className="text-[13px] leading-[19.5px] italic text-center text-white">Fee: 0.01 Sol</span>
                   </div>
                 </div>
