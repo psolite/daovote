@@ -21,11 +21,11 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-[32px] w-[138px] font-bold text-[15px] leading-[22.5px] text-white",
+        default: "w-full h-[18px] max-w-[78px] md:h-[32px] md:max-w-[138px] font-bold text-[15px] leading-[22.5px] text-white",
         md: "h-[42px] w-[139px] font-bold text-[20px] leading-[24px] ",
         sm: "h-[35px] w-[113.3px] text-[13px] leading-[17.6px] text-white",
         xs: "h-[21.2px] w-[91.6px] text-[12px] leading-[16.2px] text-white",
-        lg: "h-[68px] w-[283px] font-semibold text-[20px] leading-[30px] text-white",
+        lg: "h-[46px] w-[173px] md:h-[68px] md:w-[283px] font-semibold text-[20px] leading-[30px] text-white",
         full: "h-[42px]",
         vote: "h-[46px] w-[166px] text-[20px] font-semibold leading-[30px] text-white",
         icon: "h-[46px] w-[63px]",

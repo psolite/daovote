@@ -84,17 +84,17 @@ const CreatePoll = () => {
 
   return (
     <section className="pt-[122px] pb-[107px] relative">
-      <div className="container mx-auto w-full">
+      <div className="container mx-auto w-full px-4 sm:px-6 md:px-8">
         <div className="flex justify-center">
-          <div className="flex flex-col gap-[22px]">
-            <div className="max-w-[492px] card px-[28.5px] pt-[35px] pb-[17px]">
-              <h3 className="font-extrabold text-[25px] leading-[37.5px] text-white text-center mb-2">Create a Poll</h3>
+          <div className="w-full max-w-[492px]">
+            <div className="card px-4 sm:px-[28.5px] pt-[35px] pb-[17px]">
+              <h3 className="font-extrabold text-[18px] leading-[27px] md:text-[25px] md:leading-[37.5px] text-white text-center mb-2">Create a Poll</h3>
               <form onSubmit={onSubmit}>
-                <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
-                  <div className="flex flex-col gap-[5px] flex-wrap">
-                    <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Title*</p>
+                <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8 w-full">
+                  <div className="flex flex-col gap-[5px] w-full">
+                    <p className="font-semibold text-[15px] leading-[22.5px] md:text-[18px] md:leading-[27px] text-white pl-[26px]">Title*</p>
                     <Input
-                      className="w-[435px]"
+                      className="w-full"
                       type="text"
                       placeholder="eg. DAO Request for Development Proposal"
                       {...register("title")}
@@ -102,20 +102,20 @@ const CreatePoll = () => {
                     {errors.title && <p className="text-red-500 text-xs italic">{errors.title.message}</p>}
                   </div>
 
-                  <div className="flex flex-col gap-[5px] flex-wrap">
+                  <div className="flex flex-col gap-[5px] w-full">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Description*</p>
 
                     <textarea
                       placeholder="eg. This proposal suggests the development of a decentralized voting platform designed to facilitate transparent ...."
                       {...register("description")}
-                      className="min-h-[111px] w-[435px] rounded-[20px] px-[26px] pt-[17px]"
+                      className="min-h-[111px] w-full rounded-[20px] px-[26px] pt-[17px]"
                     />
                     {errors.description && <p className="text-red-500 text-xs italic">{errors.description.message}</p>}
                   </div>
 
-                  <div className="flex flex-col gap-[5px] flex-wrap">
+                  <div className="flex flex-col gap-[5px] w-full">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Options*</p>
-                    <Input className="w-[435px]" type="text" placeholder="eg. Solana" {...register("options")} />
+                    <Input className="w-full" type="text" placeholder="eg. Solana" {...register("options")} />
                     {errors.options && <p className="text-red-500 text-xs italic">{errors.options.message}</p>}
                     {/* <ul className="flex items-center justify-center gap-[7px]">
                       {options.map((item, index) => (
@@ -127,9 +127,9 @@ const CreatePoll = () => {
                     </ul> */}
                   </div>
 
-                  <div className="flex flex-col gap-[5px] flex-wrap">
+                  <div className="flex flex-col gap-[5px] w-full">
                     <p className="font-semibold text-[18px] leading-[27px] text-white pl-[26px]">Duration*</p>
-                    <Input className="w-[435px]" type="number" placeholder="How many hours? eg. 48" {...register("duration")} />
+                    <Input className="w-full" type="number" placeholder="How many hours? eg. 48" {...register("duration")} />
                     {errors.duration && <p className="text-red-500 text-xs italic">{errors.duration.message}</p>}
                   </div>
                   <div className="flex flex-col gap-2">
@@ -142,7 +142,7 @@ const CreatePoll = () => {
               </form>
             </div>
             <div className="flex items-center gap-[5px]">
-              <span className="font-semibold text-[20px] leading-[30px] text-white">View your previous poll</span>
+              <span className="font-semibold text-[10px] leading-[15px] md:text-[20px] md:leading-[30px] text-white">View your previous poll</span>
               <Link href={`${process.env.NEXT_PUBLIC_URL}/all`} >
                 <Image src={ArrowIcon} alt="arrow icon" />
               </Link>
@@ -162,7 +162,7 @@ const CreatePoll = () => {
       <Image
         src={FingerPrintIcon}
         alt="fingerprint icon"
-        className="hidden lg:block absolute -bottom-[1%] -right-[1%] rotate-right"
+        className="block absolute -bottom-[1%] -right-[1%] rotate-right"
       />
       {isShareCardVisible && (
         <div className="fixed inset-0 bg-primary/80 bg-opacity-50 flex items-center justify-center z-50">
