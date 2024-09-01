@@ -5,7 +5,7 @@ export const getCompletedAction = (PDA: string, imageurl: string): NextActionLin
     return {
         type: "inline",
         action: {
-            description: `This is your Poll link \nhttp://localhost:3000/api/voting/\n${PDA}`,
+            description: `This is your Poll link \n${process.env.NEXT_PUBLIC_URL}/vote/\n${PDA}`,
             icon: imageurl,
             label: `Successful`,
             title: `Your poll has been created`,
