@@ -6,9 +6,9 @@ import { DaoVoting, IDL } from './idl';
 import { link } from 'fs';
 // import { error } from 'console';
 
-const network = clusterApiUrl('devnet');
+const network = process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl('devnet');
 const connection = new Connection(network, 'confirmed');
-const programID = new PublicKey('tydvPhKqpNFNqkx78LNocANNtVyJs7ba3czkcoWB3RJ');
+const programID = new PublicKey(process.env.NEXT_PUBLIC_CA || 'tydvPhKqpNFNqkx78LNocANNtVyJs7ba3czkcoWB3RJ');
 
 export const program = new Program<DaoVoting>(IDL, programID, {
     connection
@@ -49,7 +49,7 @@ export const deriveVoterPDA = async (publicKey: PublicKey, proposal: PublicKey) 
 export const createProposal = async (title: string, description: string, options: string[], token: string[], proposalId: BN, duration: number, user: string, proposalPda: PublicKey, token_amount: number[]) => {
     const durationBN = new BN(duration * 60 * 60);
 
-    const treasury = new PublicKey("3nm2ogijjiaSKPWCyTj4aNvEniJu5a34TZiZ43AEEGpX");
+    const treasury = new PublicKey(process.env.NEXT_PUBLIC_PROJECT_ADDRESS || "3nm2ogijjiaSKPWCyTj4aNvEniJu5a34TZiZ43AEEGpX");
     const userPubKey = new PublicKey(user);
     let token_amounts: BN[];
     if (!token_amount) {
