@@ -27,6 +27,7 @@ const CreatePoll = () => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const { walletAddress, signTransaction, connectWallet, iframe } = useCanvasWallet();
+  const [loading, setLoading] = useState<boolean>(false)
 
   const Schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -60,6 +61,7 @@ const CreatePoll = () => {
 
   const submitForm = async (data: any) => {
     try {
+      setLoading(true)
       console.log(data)
       const tx = await PollTx(Hooks, data);
       if (tx && tx.status) {
@@ -70,6 +72,8 @@ const CreatePoll = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("An error occurred while submitting the form.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -134,18 +138,23 @@ const CreatePoll = () => {
                     {errors.duration && <p className="text-red-500 text-xs italic">{errors.duration.message}</p>}
                   </div>
                   <div className="flex flex-col gap-2">
-                    {publicKey || walletAddress ?
-
-                      <Button variant="outline" size="lg" type="submit">
-                        Submit
+                    {loading ?
+                      <Button variant="outline" disabled={true} size="lg">
+                        Loading...
                       </Button>
-                      :
-                      (iframe ? <Button variant="outline" size="lg" onClick={connectWallet}>Create</Button>
-                        :
-                        <Button variant="outline" onClick={handleWalletConnect} size="lg">
-                          Create
-                        </Button>
-                      )
+                      : (
+                        publicKey || walletAddress ?
+
+                          <Button variant="outline" size="lg" type="submit">
+                            Submit
+                          </Button>
+                          :
+                          (iframe ? <Button variant="outline" size="lg" onClick={connectWallet}>Create</Button>
+                            :
+                            <Button variant="outline" onClick={handleWalletConnect} size="lg">
+                              Create
+                            </Button>
+                          ))
 
                     }
 

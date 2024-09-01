@@ -40,7 +40,7 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
 
     }
     voted()
-  }, [publicKey,success])
+  }, [publicKey, success, walletAddress])
 
   // Handler for button click animations
   const handleClick = (index: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -48,6 +48,7 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
     try {
       setLoading(true)
       if (!publicKey) { return }
+      console.log("entered")
       const transaction = await vote(proposalPDA, publicKey?.toBase58(), index)
 
       let trxSignature;
@@ -105,12 +106,18 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
               </div>
 
               <div className="flex flex-col gap-[14px]">
-                {
-                  proposal.options.map((option, index) => (
-                    <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={publicKey || walletAddress  ? handleClick(index) : (iframe ? connectWallet : handleWalletConnect) } size="full">
-                      {option}
+                {loading ?
+                  (
+                    <Button variant="secondary" disabled={true} size="full">
+                      Loading...
                     </Button>
-                  ))
+                  ) : (
+                    proposal.options.map((option, index) => (
+                      <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={publicKey || walletAddress ? handleClick(index) : (iframe ? connectWallet : handleWalletConnect)} size="full">
+                        {option}
+                      </Button>
+                    ))
+                  )
                 }
 
               </div>
