@@ -53,7 +53,7 @@ export const GET = async (req: Request) => {
     //   console.log(proposal.options,proposal.options.length, "66666666666666666666666666666666666666666")
     const payload: ActionGetResponse = await client.createActionGetResponseV1(req.url, {
         title: proposal.title,
-        icon: new URL("/image/dao4.jpg", new URL(req.url).origin).toString(),
+        icon: `${process.env.NEXT_PUBLIC_URL}/image/dao4.jpg`,
         description: `${proposal.description}\n${timeleft}`,
         disabled: closed,
         label: "Send Memo",

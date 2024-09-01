@@ -9,7 +9,7 @@ const headers = createActionHeaders();
 export const GET = async (req: Request) => {
   const payload: ActionGetResponse = await client.createActionGetResponseV1(req.url, {
     title: "Create a Poll",
-    icon: new URL("/image/dao5.jpg", new URL(req.url).origin).toString(),
+    icon: `${process.env.NEXT_PUBLIC_URL}/image/dao5.jpg`,
     description: `Transparent and tamper-proof community decision making`,
     label: "Send Memo",
     links: {

@@ -19,11 +19,11 @@ const publicPixel = localFont({
 
 
 export const metadata: Metadata = {
-  title: "DAO",
-  description: "Create DAO Voting",
+  title: "DAO VOTE",
+  description: "transparency and tamper-proof community decision making",
   openGraph: {
-    title: "DAO",
-    description: "Create DAO Voting - Powered by Solana",
+    title: "DAO VOTE",
+    description: "transparency and tamper-proof community decision making",
     type: "website",
     url: `${process.env.NEXT_PUBLIC_URL}`,
     images: `${process.env.NEXT_PUBLIC_URL}/image/dao6.jpg`
