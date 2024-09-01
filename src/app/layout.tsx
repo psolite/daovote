@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     title: "DAO",
     description: "Create DAO Voting - Powered by Solana",
     type: "website",
-    url: "http://localhost:3000",
-    images: "http://localhost:3000/images/dao6.jpg"
+    url: `${process.env.NEXT_PUBLIC_URL}`,
+    images: "/images/dao6.jpg"
   },
   other: {
     'dscvr:canvas:version': "vNext",

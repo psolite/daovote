@@ -14,7 +14,7 @@ interface NavbarProps { }
 const Navbar: FC<NavbarProps> = ({ }) => {
   const { publicKey, wallet } = useWallet()
   const { walletAddress, iframe, connectWallet, userInfo, walletIcon } = useCanvasWallet()
-  console.log(userInfo?.avatar)
+  // console.log(userInfo?.avatar)
   return (
     <nav className="bg-white fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto max-w-6xl w-full relative">
