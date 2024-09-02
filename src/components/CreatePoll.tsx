@@ -93,7 +93,7 @@ const CreatePoll = () => {
         <div className="flex justify-center">
           <div className="w-full max-w-[492px]">
             <div className="card px-4 sm:px-[28.5px] pt-[35px] pb-[17px]">
-              <h3 className="font-extrabold text-[18px] leading-[27px] md:text-[25px] md:leading-[37.5px] text-white text-center mb-2">Create a Poll</h3>
+              <h3 className="font-extrabold text-[18px] leading-[27px] md:text-[25px] md:leading-[37.5px] text-white text-center mb-2">Create a Poll - Devnet</h3>
               <form onSubmit={onSubmit}>
                 <div className="flex flex-col items-center gap-4 sm:gap-6 md:gap-8 w-full">
                   <div className="flex flex-col gap-[5px] w-full">
