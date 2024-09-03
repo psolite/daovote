@@ -5,23 +5,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { CanvasClient } from "@dscvr-one/canvas-client-sdk";
 
+let canvasClient = new CanvasClient()
 interface ShareCardProps {
   onClose: Dispatch<SetStateAction<boolean>>;
-  data: any 
+  data: any
 }
+
+const createNewPost = (text: string) => {
+  if (!canvasClient) return;
+  const html = `<h1>Vote</h1><p>${text}</p>`;
+  canvasClient.createPost(html);
+};
 
 const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (text: string) => {
     try {
-      let canvasClient = new CanvasClient()
+
       if (canvasClient) {
         await canvasClient.copyToClipboard(text);
       } else {
         await navigator.clipboard.writeText(text);
       }
-     
+
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset the copied state after 2 seconds
     } catch (err) {
@@ -52,10 +59,10 @@ const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
                     className={`font-medium text-[13px] italic leading-[19.5px]
                                 text-tertiary`}
                   >
-                    {`${process.env.NEXT_PUBLIC_URL}/vote/${data.proposalString}`.substring(0, 40) + "..." }
+                    {`${process.env.NEXT_PUBLIC_URL}/vote/${data.proposalString}`.substring(0, 40) + "..."}
                   </span>{" "}
                 </Link>
-                <Image src={CopyIcon} className="cursor-pointer" alt="copy" onClick={() => copyToClipboard(`${process.env.NEXT_PUBLIC_URL}/vote/${data.proposalString}`)}/>
+                <Image src={CopyIcon} className="cursor-pointer" alt="copy" onClick={() => copyToClipboard(`${process.env.NEXT_PUBLIC_URL}/vote/${data.proposalString}`)} />
               </div>
             </div>
           </div>
@@ -78,9 +85,12 @@ const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
                 <Image src={Twitter} alt="twitter logo" />
               </Button>{" "}
             </Link>
-            <Link href={`https://dscvr.one/`}>
-              <Button variant="secondary" size="icon">
-                <Image src={DscrvLogo} alt="twitter logo" />
+            
+            <Link href={!canvasClient ? "https://dscvr.one/" : "#"} passHref>
+              <Button variant="secondary" size="icon"
+                onClick={canvasClient ? () => createNewPost(`${process.env.NEXT_PUBLIC_URL}/vote/${data.proposalString}`) : undefined}
+              >
+                <Image src={DscrvLogo} alt="DSCVR logo" />
               </Button>
             </Link>
           </div>
