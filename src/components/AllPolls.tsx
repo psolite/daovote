@@ -6,6 +6,7 @@ import { CanvasClient } from '@dscvr-one/canvas-client-sdk';
 import { ArrowIcon, Left, Right, FingerPrintIcon, GreenIcon, DownloadIcon, CopyIcon, GrayIcon } from "@/assets";
 // import { allPolls } from "@/constants";
 import Link from "next/link";
+import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 
 
 interface AllPollsProps {
@@ -20,18 +21,23 @@ interface AllPollsProps {
 
 const AllPolls: FC<AllPollsProps> = ({ allPolls = [] }) => {
   // const [text, setText] = useState('')
-
   const [copied, setCopied] = useState(false);
+  const { iframe } = useCanvasWallet()
+
+  let canvasClient = undefined
+  if (iframe) {
+    canvasClient = new CanvasClient()
+  }
 
   const copyToClipboard = async (text: string) => {
     try {
-      let canvasClient = new CanvasClient()
+
       if (canvasClient) {
         await canvasClient.copyToClipboard(text);
       } else {
         await navigator.clipboard.writeText(text);
       }
-     
+
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset the copied state after 2 seconds
     } catch (err) {

@@ -4,21 +4,24 @@ import { Button } from "./ui/Button";
 import Image from "next/image";
 import Link from "next/link";
 import { CanvasClient } from "@dscvr-one/canvas-client-sdk";
+import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 
-let canvasClient = new CanvasClient()
+
 interface ShareCardProps {
   onClose: Dispatch<SetStateAction<boolean>>;
   data: any
 }
 
-const createNewPost = (text: string) => {
-  if (!canvasClient) return;
-  const html = `<h1>Vote</h1><p>${text}</p>`;
-  canvasClient.createPost(html);
-};
+
 
 const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
   const [copied, setCopied] = useState(false);
+  const { iframe } = useCanvasWallet()
+  
+  let canvasClient = undefined
+  if (iframe) {
+    canvasClient = new CanvasClient()
+  }
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -34,6 +37,12 @@ const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
+  };
+
+  const createNewPost = (text: string) => {
+    if (!canvasClient) return;
+    const html = `<h1>Vote</h1><p>${text}</p>`;
+    canvasClient.createPost(html);
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -85,7 +94,7 @@ const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
                 <Image src={Twitter} alt="twitter logo" />
               </Button>{" "}
             </Link>
-            
+
             <Link href={!canvasClient ? "https://dscvr.one/" : "#"} passHref>
               <Button variant="secondary" size="icon"
                 onClick={canvasClient ? () => createNewPost(`${process.env.NEXT_PUBLIC_URL}/vote/${data.proposalString}`) : undefined}
