@@ -45,7 +45,7 @@ export const GET = async (req: Request) => {
     // console.log(closed, now, +(proposal.createdAt + proposal.duration), closingTime)
 
     const mappedOptions = proposal.options.map((option, index) => ({
-        href: `${process.env.NEXT_PUBLIC_URL}/vote/${proposalPDA}/action?optionIndex=${index}`,
+        href: `${process.env.NEXT_PUBLIC_URL}/api/vote/${proposalPDA}/action?optionIndex=${index}`,
         label: option,
 
     }));
