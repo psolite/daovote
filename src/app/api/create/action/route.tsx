@@ -15,7 +15,7 @@ export const GET = (req: Request) => {
     links: {
       actions: [
         {
-          href: req.url,
+          href: `${process.env.NEXT_PUBLIC_URL}`,
           label: "Create",
           parameters: [
             {
