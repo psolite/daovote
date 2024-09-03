@@ -7,6 +7,7 @@ import { getCompletedAction } from "./completed";
 const headers = createActionHeaders();
 
 export const GET = (req: Request) => {
+  // console.log(req.url, "uhyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
   const payload: ActionGetResponse = (req.url, {
     title: "Create a Poll",
     icon: `${process.env.NEXT_PUBLIC_URL}/image/dao5.jpg`,
@@ -15,7 +16,7 @@ export const GET = (req: Request) => {
     links: {
       actions: [
         {
-          href: `${process.env.NEXT_PUBLIC_URL}`,
+          href: `${process.env.NEXT_PUBLIC_URL}/api/create/action`,
           label: "Create",
           parameters: [
             {
