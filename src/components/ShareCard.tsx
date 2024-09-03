@@ -3,6 +3,7 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import { Button } from "./ui/Button";
 import Image from "next/image";
 import Link from "next/link";
+import { CanvasClient } from "@dscvr-one/canvas-client-sdk";
 
 interface ShareCardProps {
   onClose: Dispatch<SetStateAction<boolean>>;
@@ -14,7 +15,13 @@ const ShareCard: FC<ShareCardProps> = ({ onClose, data }) => {
 
   const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      let canvasClient = new CanvasClient()
+      if (canvasClient) {
+        await canvasClient.copyToClipboard(text);
+      } else {
+        await navigator.clipboard.writeText(text);
+      }
+     
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset the copied state after 2 seconds
     } catch (err) {
