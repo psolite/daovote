@@ -12,7 +12,7 @@ const nextConfig = {
                     },
                     {
                         key: "Permissions-Policy",
-                        value: "clipboard-read=(self), clipboard-write=(self)",
+                        value: "clipboard-read=*, clipboard-write=*",
                     }
 
                 ],
