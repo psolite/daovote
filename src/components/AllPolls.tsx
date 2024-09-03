@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { FC, useState } from "react";
+import { CanvasClient } from '@dscvr-one/canvas-client-sdk';
 import { ArrowIcon, Left, Right, FingerPrintIcon, GreenIcon, DownloadIcon, CopyIcon, GrayIcon } from "@/assets";
 // import { allPolls } from "@/constants";
 import Link from "next/link";
+
 
 interface AllPollsProps {
   allPolls: {
@@ -23,7 +25,13 @@ const AllPolls: FC<AllPollsProps> = ({ allPolls = [] }) => {
 
   const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      let canvasClient = new CanvasClient()
+      if (canvasClient) {
+        await canvasClient.copyToClipboard(text);
+      } else {
+        await navigator.clipboard.writeText(text);
+      }
+     
       setCopied(true);
       setTimeout(() => setCopied(false), 2000); // Reset the copied state after 2 seconds
     } catch (err) {
@@ -50,9 +58,8 @@ const AllPolls: FC<AllPollsProps> = ({ allPolls = [] }) => {
                       <div className="flex items-center justify-between flex-wrap">
                         <Link href={link} className="max-w-[calc(100%-24px)]">
                           <span
-                            className={`font-medium text-[11px] sm:text-[13px] italic leading-[19.5px] ${
-                              status ? "text-red-500" : "text-tertiary"
-                            } break-all`}
+                            className={`font-medium text-[11px] sm:text-[13px] italic leading-[19.5px] ${status ? "text-red-500" : "text-tertiary"
+                              } break-all`}
                           >
                             {link.length > 30 ? link.substring(0, 30) + "..." : link}
                           </span>
