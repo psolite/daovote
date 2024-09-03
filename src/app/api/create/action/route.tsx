@@ -1,13 +1,13 @@
 import { createProposal, deriveProposalPDA } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextActionLink } from "@solana/actions";
 import { getCompletedAction } from "./completed";
-import { BlinksightsClient } from "blinksights-sdk";
+// import { BlinksightsClient } from "blinksights-sdk";
 
-const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');
+// const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');
 const headers = createActionHeaders();
 
-export const GET = async (req: Request) => {
-  const payload: ActionGetResponse = await client.createActionGetResponseV1(req.url, {
+export const GET = (req: Request) => {
+  const payload: ActionGetResponse = (req.url, {
     title: "Create a Poll",
     icon: `${process.env.NEXT_PUBLIC_URL}/image/dao5.jpg`,
     description: `Transparent and tamper-proof community decision making`,
@@ -59,15 +59,13 @@ export const GET = async (req: Request) => {
 export const OPTIONS = async () => Response.json(null, { headers });
 
 export const POST = async (req: Request) => {
-
   try {
     const reqBody: ActionPostRequest = await req.json()
     const user = reqBody.account
     // client.trackActionV2(user, req.url);
-    client.trackActionV1(req.headers, user, req.url);
+    // client.trackActionV1(req.headers, user, req.url);
 
     const { proposalPda, proposalId } = await deriveProposalPDA(user)
-
     // console.log("body:", req.body);
 
     const data: any = reqBody.data
@@ -96,7 +94,6 @@ export const POST = async (req: Request) => {
       },
 
     });
-
     return Response.json(payload, {
       headers,
     });

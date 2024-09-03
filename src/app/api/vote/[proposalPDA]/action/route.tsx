@@ -1,8 +1,8 @@
 import { findOneProposal, HasVoted, vote } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextActionLink } from "@solana/actions";
-import { BlinksightsClient } from "blinksights-sdk";
+// import { BlinksightsClient } from "blinksights-sdk";
 
-const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');
+// const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');
 const headers = createActionHeaders();
 
 export const GET = async (req: Request) => {
@@ -51,7 +51,7 @@ export const GET = async (req: Request) => {
     }));
 
     //   console.log(proposal.options,proposal.options.length, "66666666666666666666666666666666666666666")
-    const payload: ActionGetResponse = await client.createActionGetResponseV1(req.url, {
+    const payload: ActionGetResponse = (req.url, {
         title: proposal.title,
         icon: `${process.env.NEXT_PUBLIC_URL}/image/dao4.jpg`,
         description: `${proposal.description}\n${timeleft}`,
@@ -80,8 +80,8 @@ export const POST = async (req: Request) => {
         // console.log(optionIndex, req, "88888888888888888888888888888888888888888888888888")
         const reqBody: ActionPostRequest = await req.json()
         const user = reqBody.account
-        client.trackActionV2(user, req.url);
-        client.trackActionV1(req.headers, user, req.url);
+        // client.trackActionV2(user, req.url);
+        // client.trackActionV1(req.headers, user, req.url);
 
         if (!proposalPDA || !optionIndex) { return }
 
