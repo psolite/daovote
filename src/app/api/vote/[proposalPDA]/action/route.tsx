@@ -45,9 +45,9 @@ export const GET = async (req: Request) => {
     // console.log(closed, now, +(proposal.createdAt + proposal.duration), closingTime)
 
     const mappedOptions = proposal.options.map((option, index) => ({
+        type: "transaction" as const,
         href: `${process.env.NEXT_PUBLIC_URL}/api/vote/${proposalPDA}/action?optionIndex=${index}`,
         label: option,
-
     }));
 
     //   console.log(proposal.options,proposal.options.length, "66666666666666666666666666666666666666666")
@@ -76,7 +76,7 @@ export const POST = async (req: Request) => {
     try {
         const url = new URL(req.url);
         const optionIndex = url.searchParams.get('optionIndex');
-        const proposalPDA =  url.pathname.split('/')[3];
+        const proposalPDA = url.pathname.split('/')[3];
         // console.log(optionIndex, req, "88888888888888888888888888888888888888888888888888")
         const reqBody: ActionPostRequest = await req.json()
         const user = reqBody.account
@@ -97,14 +97,15 @@ export const POST = async (req: Request) => {
         }
         const transaction = await vote(proposalPDA, user, +optionIndex)
 
-        
+
         const payload: ActionPostResponse = await createPostResponse({
             fields: {
-              transaction,
-              message: "You Vote has been Recorded"
+                type: "transaction",
+                transaction,
+                message: "You Vote has been Recorded"
             },
-      
-          });
+
+        });
 
         return Response.json(payload, {
             headers,
