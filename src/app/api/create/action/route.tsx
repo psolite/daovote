@@ -1,6 +1,6 @@
 import { createProposal, deriveProposalPDA } from "@/anchor/setup";
 import { ActionError, ActionGetResponse, ActionPostRequest, ActionPostResponse, createActionHeaders, createPostResponse, NextAction, NextActionLink } from "@solana/actions";
-// import { getCompletedActions } from "./completed";
+import { getCompletedAction } from "./completed";
 // import { BlinksightsClient } from "blinksights-sdk";
 
 // const client = new BlinksightsClient('4101b7f30457e845e835ef7fe57d998bad200eaf9073eea6d881ca8e57d51df4');
@@ -8,16 +8,17 @@ const headers = createActionHeaders();
 
 export const GET = (req: Request) => {
   // console.log(req.url, "uhyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy")
+  const imageurl = new URL("/image/dao5.jpg", new URL(req.url).origin).toString();
   const payload: ActionGetResponse = (req.url, {
     title: "Create a Poll",
-    icon: `${process.env.NEXT_PUBLIC_URL}/image/dao5.jpg`,
+    icon: imageurl,
     description: `Transparent and tamper-proof community decision making`,
     label: "Send Memo",
     links: {
       actions: [
         {
           type: "transaction",
-          href: `${process.env.NEXT_PUBLIC_URL}/api/create/action`,
+          href: "/api/create/action",
           label: "Create",
           parameters: [
             {
@@ -35,7 +36,7 @@ export const GET = (req: Request) => {
             {
               patternDescription: "use (,) to add options",
               name: "options",
-              label: "Options eg: BONK, WEN, JUP$",
+              label: "Options eg: BONK, WEN, JUP",
               type: "textarea",
               required: true
             },
@@ -47,6 +48,7 @@ export const GET = (req: Request) => {
             },
           ],
         },
+        
       ],
     },
   });
@@ -91,11 +93,10 @@ export const POST = async (req: Request) => {
         type: "transaction",
         transaction: transaction,
         message: "Done",
+
         links: {
-          next: {
-            type: "inline",
-            action: getCompletedActions(proposalPda.toBase58(), imageurl)
-          }
+          next: getCompletedAction(proposalPda.toBase58(), imageurl)
+
         },
       },
 
@@ -113,24 +114,4 @@ export const POST = async (req: Request) => {
     });
   }
 
-};
-
-const getCompletedActions = (PDA: string, imageurl: string): NextAction => {
-  const link = `https://twitter.com/intent/tweet?text=This%20is%20your%20Poll%20link&url=${process.env.NEXT_PUBLIC_URL}/vote/${PDA}`
-  return {
-      type: "action",
-      description: `This is your Poll link \n${process.env.NEXT_PUBLIC_URL}/vote/${PDA}`,
-      icon: imageurl,
-      label: "Successfullll",
-      title: "Your poll has been created",
-      links: {
-          actions: [
-              {
-                  type: "external-link",
-                  href: link,
-                  label: "Share Link",
-              },
-          ]
-      }
-  };
 };
