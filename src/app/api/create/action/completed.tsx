@@ -2,11 +2,12 @@ import { NextAction, NextActionLink } from "@solana/actions";
 
 
 export const getCompletedAction = (PDA: string, imageurl: string): NextActionLink => {
-    const link = `https://twitter.com/intent/tweet?text=This%20is%20your%20Poll%20link&url=${process.env.NEXT_PUBLIC_URL}/vote/${PDA}`
+    const voteLink = `${process.env.NEXT_PUBLIC_URL}/vote/${PDA}`;
+    const link = `https://x.com/intent/tweet?text=This%20is%20your%20Poll%20link&url=${voteLink}`
     return {
         type: "inline",
         action: {
-            description: `This is your Poll link \n${process.env.NEXT_PUBLIC_URL}/vote/${PDA}`,
+            description: `This is your Poll link \n${voteLink}`,
             icon: imageurl,
             label: `Successful`,
             title: `Your poll has been created`,
