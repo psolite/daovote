@@ -11,6 +11,8 @@ import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 import VotedCard from "./VotedCard";
 import Link from "next/link";
 import { PublicKey } from "@solana/web3.js";
+import type { Provider } from '@reown/appkit-adapter-solana/react';
+import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 
 interface VoteProps {
   proposal: { title: string, description: string, options: string[] }
@@ -21,26 +23,32 @@ interface VoteProps {
 
 const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) => {
   const { connection } = useConnection();
-  let { publicKey, sendTransaction } = useWallet()
+  // let { publicKey, sendTransaction } = useWallet()
   const { iframe, connectWallet, walletAddress, signTransaction } = useCanvasWallet()
   const [userHasVoted, setUserHasVoted] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
+  const { address } = useAppKitAccount();
+  const { walletProvider } = useAppKitProvider<Provider>('solana');
+  let publicKey: PublicKey | undefined;
 
   useEffect(() => {
+    console.log("publicKey")
     const voted = async () => {
-
       if (walletAddress) {
         publicKey = new PublicKey(walletAddress);
+      } else if (address) {
+        publicKey = new PublicKey(address);
       }
       if (!publicKey) { return }
+      console.log(publicKey)
       const userHasVoted = await HasVoted(proposalPDA, publicKey.toBase58())
 
       setUserHasVoted(userHasVoted)
 
     }
     voted()
-  }, [publicKey, success, walletAddress])
+  }, [address, success, walletAddress])
 
   // Handler for button click animations
   const handleClick = (index: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,7 +67,7 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
           setSuccess(true)
         }
       } else {
-        trxSignature = await sendTransaction(transaction, connection, { signers: [] });
+        trxSignature = await walletProvider.sendTransaction(transaction, connection, { signers: [] });
         confirmation = await connection.confirmTransaction(trxSignature, 'confirmed');
         console.log('Transaction confirmed:', confirmation);
         if (confirmation.value.err === null) {

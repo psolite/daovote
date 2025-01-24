@@ -16,6 +16,9 @@ import ShareCard from "./ShareCard";
 import { PollTx } from "./PollTx";
 import Link from "next/link";
 import { handleWalletConnect } from "./WalletAction";
+import type { Provider } from '@reown/appkit-adapter-solana/react';
+import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import { PublicKey, Transaction } from "@solana/web3.js";
 
 
 
@@ -25,9 +28,11 @@ const CreatePoll = () => {
   const [isShareCardVisible, setIsShareCardVisible] = useState(false);
   const [shareCardData, setShareCardData] = useState<any>();
   const { connection } = useConnection();
-  const { publicKey, sendTransaction } = useWallet();
+  // const { publicKey, sendTransaction } = useWallet();
   const { walletAddress, signTransaction, connectWallet, iframe } = useCanvasWallet();
   const [loading, setLoading] = useState<boolean>(false)
+  const { address } = useAppKitAccount();
+  const { walletProvider } = useAppKitProvider<Provider>('solana');
 
   const Schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -51,24 +56,39 @@ const CreatePoll = () => {
     }
   });
 
-  const Hooks = {
-    connection,
-    pubKey: publicKey,
-    sendTransaction,
-    walletAddress,
-    signTransaction
-  }
 
   const submitForm = async (data: any) => {
+    if (!address) return;
+    const Hooks = {
+      connection,
+      pubKey: new PublicKey(address),
+      walletAddress,
+    }
     try {
       setLoading(true)
-      console.log(data)
+      // console.log(data)
       const tx = await PollTx(Hooks, data);
-      if (tx && tx.status) {
+
+      let trxSign;
+      if (tx?.transaction && tx?.transaction instanceof Transaction) {
+        if (walletAddress) {
+          trxSign = await signTransaction(tx.transaction);
+        } else {
+          trxSign = await walletProvider.sendTransaction(tx.transaction, connection, { signers: [] });
+          // await connection.confirmTransaction(trxSign, 'confirmed');
+          const confirmation = await connection.confirmTransaction(trxSign, 'confirmed');
+          console.log('Transaction confirmed:', confirmation);
+        }
+      console.log(
+        `View on explorer: https://solana.fm/tx/${trxSign}?cluster`
+      );
 
         setShareCardData(tx)
-        setIsShareCardVisible(tx.status);
+        setIsShareCardVisible(true);
+      } else {
+        alert("An error occurred while submitting the form.");
       }
+
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("An error occurred while submitting the form.");
@@ -143,7 +163,7 @@ const CreatePoll = () => {
                         Loading...
                       </Button>
                       : (
-                        publicKey || walletAddress ?
+                        address || walletAddress ?
 
                           <Button variant="outline" size="lg" type="submit">
                             Submit

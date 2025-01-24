@@ -8,6 +8,7 @@ import { handleWalletConnect } from "./WalletAction";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
+import AppKit from "./appkit";
 
 interface NavbarProps { }
 
@@ -20,9 +21,9 @@ const Navbar: FC<NavbarProps> = ({ }) => {
       <div className="container mx-auto max-w-6xl w-full relative">
         <div className="flex items-center justify-end w-full h-[65px]">
           <Image src={Logo} alt="logo" className="absolute left-0 -bottom-[99%]" />
-         
+         <AppKit />
           <>
-            {iframe ?
+            {/* {iframe ?
               (walletAddress ? <Button>
                 <Image
                   src={`${userInfo?.avatar}`}
@@ -56,7 +57,7 @@ const Navbar: FC<NavbarProps> = ({ }) => {
                 }
               </Button>
             }
-            <WalletMultiButton style={{ display: "none" }} />
+            <WalletMultiButton style={{ display: "none" }} /> */}
           </>
 
         </div>
