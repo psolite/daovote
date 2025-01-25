@@ -4,7 +4,7 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+// import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
@@ -19,6 +19,7 @@ import { handleWalletConnect } from "./WalletAction";
 import type { Provider } from '@reown/appkit-adapter-solana/react';
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { PublicKey, Transaction } from "@solana/web3.js";
+import { connection } from "@/lib/connection";
 
 
 
@@ -27,7 +28,7 @@ interface CreatePollProps { }
 const CreatePoll = () => {
   const [isShareCardVisible, setIsShareCardVisible] = useState(false);
   const [shareCardData, setShareCardData] = useState<any>();
-  const { connection } = useConnection();
+  // const { connection } = useConnection();
   // const { publicKey, sendTransaction } = useWallet();
   const { walletAddress, signTransaction, connectWallet, iframe } = useCanvasWallet();
   const [loading, setLoading] = useState<boolean>(false)

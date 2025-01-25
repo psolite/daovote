@@ -29,7 +29,7 @@ createAppKit({
     email: false,
     socials: []
   },
-  themeMode: 'dark',
+  themeMode: 'light',
 })
 
 const AppKit = () => {

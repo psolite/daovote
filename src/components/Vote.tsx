@@ -5,7 +5,7 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import { HasVoted, vote } from "@/anchor/setup";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+// import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { handleWalletConnect } from "./WalletAction";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 import VotedCard from "./VotedCard";
@@ -13,6 +13,7 @@ import Link from "next/link";
 import { PublicKey } from "@solana/web3.js";
 import type { Provider } from '@reown/appkit-adapter-solana/react';
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import { connection } from "@/lib/connection";
 
 interface VoteProps {
   proposal: { title: string, description: string, options: string[] }
@@ -22,7 +23,7 @@ interface VoteProps {
 }
 
 const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) => {
-  const { connection } = useConnection();
+  // const { connection } = useConnection();
   // let { publicKey, sendTransaction } = useWallet()
   const { iframe, connectWallet, walletAddress, signTransaction } = useCanvasWallet()
   const [userHasVoted, setUserHasVoted] = useState<boolean>(false)
@@ -51,33 +52,33 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
   }, [address, success, walletAddress])
 
   // Handler for button click animations
-  const handleClick = (index: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleClick = (index: number) => async () => {
+      console.log("entered")
     try {
       setLoading(true)
-      if (!publicKey) { return }
-      console.log("entered")
-      const transaction = await vote(proposalPDA, publicKey?.toBase58(), index)
+      if (!address) { return }
+      const transaction = await vote(proposalPDA, address, index)
 
       let trxSignature;
-      let confirmation;
+      // let confirmation;
       if (walletAddress) {
         trxSignature = await signTransaction(transaction);
         if (trxSignature) {
           setSuccess(true)
         }
       } else {
-        trxSignature = await walletProvider.sendTransaction(transaction, connection, { signers: [] });
-        confirmation = await connection.confirmTransaction(trxSignature, 'confirmed');
-        console.log('Transaction confirmed:', confirmation);
-        if (confirmation.value.err === null) {
+        trxSignature = await walletProvider.sendTransaction(transaction, connection);
+        // confirmation = await connection.confirmTransaction(trxSignature, 'confirmed');
+        // console.log('Transaction confirmed:', confirmation);
+        // if (confirmation.value.err === null) {
+        // }
           setSuccess(true)
-        }
       }
       // Remove the class after animation duration (e.g., 300ms)
       console.log(`Vote transaction sent: ${trxSignature}`);
-    } catch {
-      alert("Transaction Error")
+    } catch (error) {
+      console.log(error)
+      alert("Error:  " +error)
     } finally {
       setLoading(false)
     }
@@ -121,7 +122,7 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
                     </Button>
                   ) : (
                     proposal.options.map((option, index) => (
-                      <Button key={index} variant="secondary" disabled={closed || userHasVoted} onClick={publicKey || walletAddress ? handleClick(index) : (iframe ? connectWallet : handleWalletConnect)} size="full">
+                      <Button key={index} variant="secondary" type="button" disabled={closed || userHasVoted} onClick={handleClick(index)} size="full">
                         {option}
                       </Button>
                     ))
