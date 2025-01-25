@@ -22,44 +22,7 @@ const Navbar: FC<NavbarProps> = ({ }) => {
         <div className="flex items-center justify-end w-full h-[65px]">
           <Image src={Logo} alt="logo" className="absolute left-0 -bottom-[99%]" />
          <AppKit />
-          <>
-            {/* {iframe ?
-              (walletAddress ? <Button>
-                <Image
-                  src={`${userInfo?.avatar}`}
-                  alt={'wallet'}
-                  height={15}
-                  width={15}
-                  className="mr-2"
-                />
-                {userInfo?.username}
-              </Button>
-
-                :
-                <Button className="dark:bg-primary dark:text-white" onClick={connectWallet}>Connect Wallet</Button>
-              )
-
-
-              :
-              <Button className="dark:bg-primary dark:text-white" onClick={handleWalletConnect}>
-                {!publicKey ? "Connect" :
-                  <div className="flex">
-                    <Image
-                      src={wallet?.adapter.icon || ''}
-                      alt={wallet?.adapter.name || ''}
-                      height={15}
-                      width={15}
-                      className="mr-5 "
-                    />
-                    {publicKey.toBase58().slice(0, 3)}...{publicKey.toBase58().slice(-3)}
-
-                  </div>
-                }
-              </Button>
-            }
-            <WalletMultiButton style={{ display: "none" }} /> */}
-          </>
-
+         
         </div>
       </div>
     </nav>
