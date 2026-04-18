@@ -4,7 +4,7 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-// import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
@@ -16,10 +16,8 @@ import ShareCard from "./ShareCard";
 import { PollTx } from "./PollTx";
 import Link from "next/link";
 import { handleWalletConnect } from "./WalletAction";
-import type { Provider } from '@reown/appkit-adapter-solana/react';
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { PublicKey, Transaction } from "@solana/web3.js";
-import { connection } from "@/lib/connection";
+import { Buffer } from "buffer";
 
 
 
@@ -28,12 +26,9 @@ interface CreatePollProps { }
 const CreatePoll = () => {
   const [isShareCardVisible, setIsShareCardVisible] = useState(false);
   const [shareCardData, setShareCardData] = useState<any>();
-  // const { connection } = useConnection();
-  // const { publicKey, sendTransaction } = useWallet();
-  const { walletAddress, signTransaction, connectWallet, iframe } = useCanvasWallet();
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet();
   const [loading, setLoading] = useState<boolean>(false)
-  const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider<Provider>('solana');
 
   const Schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -59,36 +54,32 @@ const CreatePoll = () => {
 
 
   const submitForm = async (data: any) => {
-    if (!address) return;
+    if (!publicKey) return;
     const Hooks = {
       connection,
-      pubKey: new PublicKey(address),
-      walletAddress,
+      pubKey: publicKey
     }
     try {
       setLoading(true)
-      // console.log(data)
-      const tx = await PollTx(Hooks, data);
-
-      let trxSign;
-      if (tx?.transaction && tx?.transaction instanceof Transaction) {
-        if (walletAddress) {
-          trxSign = await signTransaction(tx.transaction);
-        } else {
-          trxSign = await walletProvider.sendTransaction(tx.transaction, connection, { signers: [] });
-          // await connection.confirmTransaction(trxSign, 'confirmed');
-          const confirmation = await connection.confirmTransaction(trxSign, 'confirmed');
-          console.log('Transaction confirmed:', confirmation);
-        }
-      console.log(
-        `View on explorer: https://solana.fm/tx/${trxSign}?cluster`
-      );
-
-        setShareCardData(tx)
-        setIsShareCardVisible(true);
-      } else {
-        alert("An error occurred while submitting the form.");
+      console.log(data)
+      const res = await PollTx(Hooks, data);
+      console.log(res)
+      if (!res || !res?.transaction) {
+        throw Error("not working ")
       }
+
+      const txBuffer = Buffer.from(res.transaction, 'base64');
+      const transaction = Transaction.from(txBuffer);
+      const signature = await sendTransaction(transaction, connection);
+      console.log('Transaction sent, signature:', signature);
+
+      const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+      console.log('Transaction confirmed:', confirmation);
+
+      alert(`Created poll! Tx: ${signature}`);
+
+      // setShareCardData(tx)
+      // setIsShareCardVisible(true);
 
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -164,19 +155,10 @@ const CreatePoll = () => {
                         Loading...
                       </Button>
                       : (
-                        address || walletAddress ?
-
-                          <Button variant="outline" size="lg" type="submit">
-                            Submit
-                          </Button>
-                          :
-                          (iframe ? <Button variant="outline" size="lg" onClick={connectWallet}>Create</Button>
-                            :
-                            <Button variant="outline" onClick={handleWalletConnect} size="lg">
-                              Create
-                            </Button>
-                          ))
-
+                        <Button variant="outline" size="lg" type="submit">
+                          Submit
+                        </Button>
+                      )
                     }
 
                     <span className="text-[13px] leading-[19.5px] italic text-center text-white">Fee: 0.01 Sol</span>

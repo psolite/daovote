@@ -6,9 +6,13 @@ import { FC } from "react";
 import { Button } from "./ui/Button";
 import { handleWalletConnect } from "./WalletAction";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import dynamic from "next/dynamic";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
-import AppKit from "./appkit";
+
+const WalletMultiButton = dynamic(
+  () => import("@solana/wallet-adapter-react-ui").then((m) => m.WalletMultiButton),
+  { ssr: false }
+);
 
 interface NavbarProps { }
 
@@ -21,8 +25,8 @@ const Navbar: FC<NavbarProps> = ({ }) => {
       <div className="container mx-auto max-w-6xl w-full relative">
         <div className="flex items-center justify-end w-full h-[65px]">
           <Image src={Logo} alt="logo" className="absolute left-0 -bottom-[99%]" />
-         <AppKit />
-         
+         <Button onClick={!publicKey ? handleWalletConnect : undefined}>{!publicKey ? "Connect Wallet" : publicKey.toBase58().slice(0, 4)}</Button>
+         <WalletMultiButton style={{ display: "none" }}/>
         </div>
       </div>
     </nav>

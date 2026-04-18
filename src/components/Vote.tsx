@@ -5,15 +5,13 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import { HasVoted, vote } from "@/anchor/setup";
-// import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { handleWalletConnect } from "./WalletAction";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import useCanvasWallet from "@/app/providers/CanvasWalletProvider";
 import VotedCard from "./VotedCard";
 import Link from "next/link";
-import { PublicKey } from "@solana/web3.js";
-import type { Provider } from '@reown/appkit-adapter-solana/react';
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import { Transaction } from "@solana/web3.js";
 import { connection } from "@/lib/connection";
+import { Buffer } from "buffer";
 
 interface VoteProps {
   proposal: { title: string, description: string, options: string[] }
@@ -24,23 +22,16 @@ interface VoteProps {
 
 const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) => {
   // const { connection } = useConnection();
-  // let { publicKey, sendTransaction } = useWallet()
+  let { publicKey, sendTransaction } = useWallet()
   const { iframe, connectWallet, walletAddress, signTransaction } = useCanvasWallet()
   const [userHasVoted, setUserHasVoted] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
-  const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider<Provider>('solana');
-  let publicKey: PublicKey | undefined;
 
   useEffect(() => {
     console.log("publicKey")
     const voted = async () => {
-      if (walletAddress) {
-        publicKey = new PublicKey(walletAddress);
-      } else if (address) {
-        publicKey = new PublicKey(address);
-      }
+
       if (!publicKey) { return }
       console.log(publicKey)
       const userHasVoted = await HasVoted(proposalPDA, publicKey.toBase58())
@@ -49,36 +40,31 @@ const Vote: FC<VoteProps> = ({ proposal, countdown = [], closed, proposalPDA }) 
 
     }
     voted()
-  }, [address, success, walletAddress])
+  }, [success, walletAddress])
 
   // Handler for button click animations
   const handleClick = (index: number) => async () => {
-      console.log("entered")
+    console.log("entered")
     try {
       setLoading(true)
-      if (!address) { return }
-      const transaction = await vote(proposalPDA, address, index)
+      if (!publicKey) { return }
+      const serializedTx = await vote(proposalPDA, publicKey.toBase58(), index)
 
-      let trxSignature;
-      // let confirmation;
-      if (walletAddress) {
-        trxSignature = await signTransaction(transaction);
-        if (trxSignature) {
-          setSuccess(true)
-        }
-      } else {
-        trxSignature = await walletProvider.sendTransaction(transaction, connection);
-        // confirmation = await connection.confirmTransaction(trxSignature, 'confirmed');
-        // console.log('Transaction confirmed:', confirmation);
-        // if (confirmation.value.err === null) {
-        // }
-          setSuccess(true)
+      const txBuffer = Buffer.from(serializedTx, 'base64');
+      const transaction = Transaction.from(txBuffer);
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+      const signature = await sendTransaction(transaction, connection);
+      console.log('Transaction sent, signature:', signature);
+
+      const confirmation = await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
+      console.log('Transaction confirmed:', confirmation);
+      if (confirmation.value.err === null) {
+        setSuccess(true)
+        alert(`Vote transaction sent: ${signature}`)
       }
-      // Remove the class after animation duration (e.g., 300ms)
-      console.log(`Vote transaction sent: ${trxSignature}`);
     } catch (error) {
       console.log(error)
-      alert("Error:  " +error)
+      alert("Error:  " + error)
     } finally {
       setLoading(false)
     }

@@ -1,149 +1,104 @@
-// src/setup.ts
+import { AnchorProvider, Program, BN, web3 } from "@coral-xyz/anchor";
+import { clusterApiUrl, Connection, PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
+import { DaoVoting, IDL } from "./idl";
 
-import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
-import { BN, Program, web3 } from '@coral-xyz/anchor';
-import { DaoVoting, IDL } from './idl';
-import { link } from 'fs';
-// import { error } from 'console';
+const rpc = process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl('devnet')
 
-const network = process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl('devnet');
-const connection = new Connection(network, 'confirmed');
-const programID = new PublicKey(process.env.NEXT_PUBLIC_CA || 'tydvPhKqpNFNqkx78LNocANNtVyJs7ba3czkcoWB3RJ');
+const connection = new Connection(rpc, 'confirmed')
 
-export const program = new Program<DaoVoting>(IDL, programID, {
-    connection
-});
+const readOnlyWallet = {
+    publicKey: PublicKey.default,
+    signTransaction: async <T extends Transaction | VersionedTransaction>(tx: T) => tx,
+    signAllTransactions: async <T extends Transaction | VersionedTransaction>(txs: T[]) => txs,
+}
 
+const provider = new AnchorProvider(connection, readOnlyWallet);
 
-export const deriveProposalPDA = async (publicKey: string) => {
+const program = new Program<DaoVoting>(IDL, provider);
 
-    //  PDA using the wallet's public key 
-    // const { proposalPda, bump, proposalId } = await program.methods
-    //     .getProposalPda()
-    //     .accounts({
-    //         user: publicKey,
-    //     })
-    //     .call();
-
-    // console.log("here now")
-    // console.log(proposalPda, bump, proposalId)
+export const deriveProposalPDA = async (publicKey: PublicKey) => {
     const proposalId = new BN(Date.now());
-    const user = new PublicKey(publicKey)
 
     const proposalIdBuffer = proposalId.toArrayLike(Buffer, 'le', 8);
     const [proposalPda, bump] = PublicKey.findProgramAddressSync(
-        [Buffer.from("proposal"), user.toBuffer(), proposalIdBuffer],
+        [Buffer.from("proposal"), publicKey.toBuffer(), proposalIdBuffer],
         program.programId
     );
-    return { proposalPda, bump, proposalId };
-};
+    return { proposalPda, proposalId }
+}
 
-export const deriveVoterPDA = async (publicKey: PublicKey, proposal: PublicKey) => {
-    const [voterPDA, bump] = PublicKey.findProgramAddressSync(
-        [Buffer.from("voter"), publicKey.toBuffer(), proposal.toBuffer()],
+export const deriveVotersPda = async (publicKey: PublicKey, proposal: string) => {
+    const proposalPublicKey = new PublicKey(proposal)
+
+    const [voterPDA, _bump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("voter"), publicKey.toBuffer(), proposalPublicKey.toBuffer()],
         program.programId
     );
-    return { voterPDA, bump }
+    return {voterPDA}
 }
 
-export const createProposal = async (title: string, description: string, options: string[], token: string[], proposalId: BN, duration: number, user: string, proposalPda: PublicKey, token_amount: number[]) => {
-    const durationBN = new BN(duration * 60 * 60);
+export const createProposal = async (
+    title: string,
+    description: string,
+    options: string[],
+    duration: number,
+    proposalId: BN,
+    proposalPda: PublicKey,
+    user: PublicKey
 
-    const treasury = new PublicKey(process.env.NEXT_PUBLIC_PROJECT_ADDRESS || "3nm2ogijjiaSKPWCyTj4aNvEniJu5a34TZiZ43AEEGpX");
-    const userPubKey = new PublicKey(user);
-    let token_amounts: BN[];
-    if (!token_amount) {
-        token_amounts = []
-    } else {
-        token_amounts = token_amount.map((num) => new BN(num))
-    }
-    try {
-        const tx = await program.methods.createProposal(title, description, options, token, durationBN, token_amounts, proposalId)
-            .accounts({
-                proposal: proposalPda,
-                user: userPubKey,
-                treasury: treasury,
-                systemProgram: web3.SystemProgram.programId
-            })
-            .transaction();
-
-        // Fetch the recent blockhash and set the fee payer
-        const { blockhash } = await connection.getLatestBlockhash({ commitment: "finalized" });
-        tx.recentBlockhash = blockhash;
-        tx.feePayer = userPubKey;
+) => {
+    const durationBN = new BN(duration * 3600)
+    const token: string[] = []
+    const token_amount: BN[] = []
 
 
-        console.log("Transaction created successfully. Sending to wallet for approval.");
+    // Call the createProposal function
+    const tx = await (program.methods as any).createProposal(
+        title,
+        description,
+        options,
+        token,
+        durationBN,
+        token_amount,
+        proposalId
+    ).accountsStrict({
+        proposal: proposalPda,
+        user,
+        treasury: user,
+        systemProgram: web3.SystemProgram.programId,
+    })
+        .transaction()
 
-        // Serialize the transaction
-        // const serializedTx = tx.serialize({
-        //     requireAllSignatures: false,
-        //     verifySignatures: false,
-        // }).toString('base64');
-        // console.log('Serialized Transaction:', serializedTx);
+    const { blockhash } = await connection.getLatestBlockhash({ commitment: "confirmed" });
+    tx.recentBlockhash = blockhash
+    tx.feePayer = user
 
-        return tx
-    } catch (error) {
-        // console.error("Transaction creation failed", error);
-        throw new Error("Transaction creation failed");
-    }
-};
+    const serializeTx = tx.serialize({
+        requireAllSignatures: false,
+        verifySignatures: false
+    }).toString('base64')
 
-export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {
-    console.log(publicKey, proposalPublicKey)
-    const user = new PublicKey(publicKey)
-    const proposalPDA = new PublicKey(proposalPublicKey)
-    const { voterPDA } = await deriveVoterPDA(user, proposalPDA)
+    return serializeTx
 
-    try {
-        const tx = await program.methods.vote(optionIndex)
-            .accounts({
-                proposal: proposalPDA,
-                voter: voterPDA,
-                user: user,
-                systemProgram: web3.SystemProgram.programId,
-            })
-            .transaction();
-
-        // Fetch the recent blockhash and set the fee payer
-        const { blockhash } = await connection.getLatestBlockhash({ commitment: "finalized" });
-        tx.recentBlockhash = blockhash;
-        tx.feePayer = user;
-
-        console.log('Sending transaction...', tx);
-
-        // Serialize the transaction
-        // const serializedTx = tx.serialize({
-        //     requireAllSignatures: false,
-        //     verifySignatures: false,
-        // }).toString('base64');
-        // console.log('Serialized Transaction:', serializedTx);
-
-        return tx
-    } catch (error) {
-        console.error("Transaction creation failed", error);
-        throw new Error("Transaction creation failed");
-    }
 }
+
 
 export const AllProposal = async () => {
-    const allProposal = await program.account.proposal.all();
+    const allProposal = await (program.account as any).proposal.all();
 
-    const proposals = allProposal.map((proposal) => {
+    const proposals = allProposal.map((proposal: any) => {
 
-        const optionsWithVoteCounts = proposal.account.options.map((option, index) => {
+        const optionsWithVoteCounts = proposal.account.options.map((option: any, index: number) => {
             const voteCount = proposal.account.voteCounts[index];
             return `${option.toString()}: ${voteCount.toString()}`;
         });
-        const tokenWithamount = proposal.account.token.map((token, index) => {
+        const tokenWithamount = proposal.account.token.map((token: any, index: number) => {
             const amount = proposal.account.voteCounts[index];
             return `${token.toString()}: ${amount.toString()}`;
         });
-        // const Isactive = 
         const now = Date.now()
         let Isactive = true;
 
-        // Convert proposal.createdAt from seconds to milliseconds
         const createdAtInMillis = proposal.account.createdAt * 1000;
         const durationInMillis = proposal.account.duration * 1000;
 
@@ -167,20 +122,54 @@ export const AllProposal = async () => {
         }
     });
     return proposals
-    console.log(proposals)
 }
 
 export const findOneProposal = async (proposalPDA: string) => {
-    return await program.account.proposal.fetch(proposalPDA);
+    return await (program.account as any).proposal.fetch(proposalPDA);
 }
 
 export const HasVoted = async (proposalPDA: string, user: string) => {
-    const voters = await program.account.voter.all();
-    const userHasVoted = voters.some(voter =>
+    const voters = await (program.account as any).voter.all();
+    const userHasVoted = voters.some((voter: any) =>
         voter.account.user.equals(new PublicKey(user)) &&
         voter.account.proposal.equals(new PublicKey(proposalPDA as string))
     );
     return userHasVoted
 }
 
+export const vote = async (proposalPublicKey: string, publicKey: string, optionIndex: number) => {
+    console.log(publicKey, proposalPublicKey)
+    const user = new PublicKey(publicKey)
+    const proposalPDA = new PublicKey(proposalPublicKey)
+    const { voterPDA } = await deriveVotersPda(user, proposalPDA.toString())
 
+    try {
+        const tx = await (program.methods as any).vote(optionIndex)
+            .accountsStrict({
+                proposal: proposalPDA,
+                voter: voterPDA,
+                user: user,
+                systemProgram: web3.SystemProgram.programId,
+            })
+            .transaction();
+
+        // Fetch the recent blockhash and set the fee payer
+        const { blockhash } = await connection.getLatestBlockhash({ commitment: "finalized" });
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = user;
+
+        console.log('Sending transaction...', tx);
+
+        // Serialize the transaction
+        const serializedTx = tx.serialize({
+            requireAllSignatures: false,
+            verifySignatures: false,
+        }).toString('base64');
+        console.log('Serialized Transaction:', serializedTx);
+
+        return serializedTx
+    } catch (error) {
+        console.error("Transaction creation failed", error);
+        throw new Error("Transaction creation failed");
+    }
+}

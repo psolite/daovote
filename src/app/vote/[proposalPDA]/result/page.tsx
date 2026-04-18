@@ -1,9 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { findOneProposal, HasVoted } from "@/anchor/setup";
+import { findOneProposal } from "@/anchor/setup";
 import { useParams } from "next/navigation";
-import Vote from "@/components/Vote";
 import VoteSummary from "@/components/VoteSummary";
 
 export default function Voting() {
@@ -27,34 +26,37 @@ export default function Voting() {
                 console.log("Fetched proposal:", proposalData);
                 setProposal(proposalData);
 
-                const now = Date.now();
-                const createdAtInMillis = proposalData.createdAt * 1000;
-                const durationInMillis = proposalData.duration * 1000;
+                const closingTime =
+                    proposalData.createdAt * 1000 + proposalData.duration * 1000;
 
-                // Calculate the closing time by adding duration to the creation time
-                const closingTime = createdAtInMillis + durationInMillis;
-                const timeDifference = closingTime - now;
-
-                // Convert milliseconds to days, hours, and minutes
-                const totalSeconds = Math.floor(timeDifference / 1000);
-                const days = Math.floor(totalSeconds / (3600 * 24));
-                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-                let countdown = [
-                    { id: "countdown1", description: "DAYS", value: days },
-                    { id: "countdown2", description: "HOURS", value: hours },
-                    { id: "countdown3", description: "MIN", value: minutes },
-                ];
-                if (timeDifference <= 0) {
-                    setClosed(true);
-                    countdown = [
-                        { id: "countdown1", description: "DAYS", value: 0 },
-                        { id: "countdown2", description: "HOURS", value: 0 },
-                        { id: "countdown3", description: "MIN", value: 0 },
+                const buildCountdown = () => {
+                    const diff = closingTime - Date.now();
+                    if (diff <= 0) {
+                        setClosed(true);
+                        return [
+                            { id: "countdown1", description: "DAYS", value: 0 },
+                            { id: "countdown2", description: "HOURS", value: 0 },
+                            { id: "countdown3", description: "MIN", value: 0 },
+                            { id: "countdown4", description: "SEC", value: 0 },
+                        ];
+                    }
+                    const total = Math.floor(diff / 1000);
+                    return [
+                        { id: "countdown1", description: "DAYS", value: Math.floor(total / 86400) },
+                        { id: "countdown2", description: "HOURS", value: Math.floor((total % 86400) / 3600) },
+                        { id: "countdown3", description: "MIN", value: Math.floor((total % 3600) / 60) },
+                        { id: "countdown4", description: "SEC", value: total % 60 },
                     ];
-                }
-                setTimeLeft(countdown);
+                };
+
+                setTimeLeft(buildCountdown());
+                const interval = setInterval(() => {
+                    const countdown = buildCountdown();
+                    setTimeLeft(countdown);
+                    if (countdown.every(c => c.value === 0)) clearInterval(interval);
+                }, 1000);
+
+                return () => clearInterval(interval);
 
 
             } catch (error) {

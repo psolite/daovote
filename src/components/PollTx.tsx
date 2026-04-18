@@ -20,22 +20,17 @@ interface CreateHomePoll {
 interface Hooks {
     connection: Connection,
     pubKey: PublicKey | null,
-    walletAddress: string | null,
 }
 
 export const PollTx = async (hooks: Hooks, data: CreateHomePoll) => {
-    const { connection, pubKey, walletAddress } = hooks
+    const { connection, pubKey,  } = hooks
     const { title, description, options, duration } = data
     console.log("here")
-    // Determine which public key to use
-    let publicKey = pubKey;
-    if (walletAddress) {
-        publicKey = new PublicKey(walletAddress);
-    }
-    if (!publicKey) return;
+    
+    if (!pubKey) return;
     console.log("here")
     try {
-        const { proposalPda, proposalId } = await deriveProposalPDA(publicKey.toString());
+        const { proposalPda, proposalId } = await deriveProposalPDA(pubKey);
         const optionsArray = options.split(',')
             .map((item: string) => item.trim())
             .filter((item: string) => item.length > 0);
@@ -47,12 +42,10 @@ export const PollTx = async (hooks: Hooks, data: CreateHomePoll) => {
             title,
             description,
             optionsArray,
-            tokenarray,
-            proposalId,
             duration,
-            publicKey.toString(),
+            proposalId,
             proposalPda,
-            amountarray
+            pubKey,
         );
         const proposalString = proposalPda.toString()
         return {transaction, proposalString}

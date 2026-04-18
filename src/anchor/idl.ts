@@ -1,32 +1,69 @@
 export type DaoVoting = {
-  "version": "0.1.0",
-  "name": "dao_voting",
+  "address": "7ocog5ARqzjiUVRaxfX2qbcMcyvDCEiWeCF2zwyp5DSD",
+  "metadata": {
+    "name": "dao_voting",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
   "instructions": [
     {
-      "name": "createProposal",
+      "name": "create_proposal",
+      "discriminator": [
+        132,
+        116,
+        68,
+        174,
+        216,
+        160,
+        198,
+        22
+      ],
       "accounts": [
         {
           "name": "proposal",
-          "isMut": true,
-          "isSigner": false
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "proposal_id"
+              }
+            ]
+          }
         },
         {
           "name": "user",
-          "isMut": true,
-          "isSigner": true
+          "writable": true,
+          "signer": true
         },
         {
           "name": "treasury",
-          "isMut": true,
-          "isSigner": false,
           "docs": [
             "CHECK"
-          ]
+          ],
+          "writable": true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
@@ -55,44 +92,73 @@ export type DaoVoting = {
           "type": "i64"
         },
         {
-          "name": "tokenAmount",
+          "name": "token_amount",
           "type": {
             "vec": "u64"
           }
         },
         {
-          "name": "proposalId",
+          "name": "proposal_id",
           "type": "u64"
         }
       ]
     },
     {
       "name": "vote",
+      "discriminator": [
+        227,
+        110,
+        155,
+        23,
+        136,
+        126,
+        172,
+        25
+      ],
       "accounts": [
         {
           "name": "proposal",
-          "isMut": true,
-          "isSigner": false
+          "writable": true
         },
         {
           "name": "voter",
-          "isMut": true,
-          "isSigner": false
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "proposal"
+              }
+            ]
+          }
         },
         {
           "name": "user",
-          "isMut": true,
-          "isSigner": true
+          "writable": true,
+          "signer": true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "optionIndex",
+          "name": "option_index",
           "type": "u8"
         }
       ]
@@ -100,7 +166,42 @@ export type DaoVoting = {
   ],
   "accounts": [
     {
-      "name": "proposal",
+      "name": "Proposal",
+      "discriminator": [
+        26,
+        94,
+        189,
+        187,
+        116,
+        136,
+        53,
+        33
+      ]
+    },
+    {
+      "name": "Voter",
+      "discriminator": [
+        241,
+        93,
+        35,
+        191,
+        254,
+        147,
+        17,
+        202
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "VotingPeriodEnded",
+      "msg": "The voting period for this proposal has ended."
+    }
+  ],
+  "types": [
+    {
+      "name": "Proposal",
       "type": {
         "kind": "struct",
         "fields": [
@@ -125,13 +226,13 @@ export type DaoVoting = {
             }
           },
           {
-            "name": "voteCounts",
+            "name": "vote_counts",
             "type": {
               "vec": "u64"
             }
           },
           {
-            "name": "createdAt",
+            "name": "created_at",
             "type": "i64"
           },
           {
@@ -139,7 +240,7 @@ export type DaoVoting = {
             "type": "i64"
           },
           {
-            "name": "tokenAmount",
+            "name": "token_amount",
             "type": {
               "vec": "u64"
             }
@@ -148,78 +249,94 @@ export type DaoVoting = {
       }
     },
     {
-      "name": "voter",
+      "name": "Voter",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "proposal",
-            "type": "publicKey"
+            "type": "pubkey"
           },
           {
             "name": "user",
-            "type": "publicKey"
+            "type": "pubkey"
           },
           {
-            "name": "optionVoted",
+            "name": "option_voted",
             "type": "u8"
           }
         ]
       }
-    }
-  ],
-  "types": [
-    {
-      "name": "VoteOnOption",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "optionIndex",
-            "type": "u8"
-          }
-        ]
-      }
-    }
-  ],
-  "errors": [
-    {
-      "code": 6000,
-      "name": "VotingPeriodEnded",
-      "msg": "The voting period for this proposal has ended."
     }
   ]
-};
+}
 
 export const IDL: DaoVoting = {
-  "version": "0.1.0",
-  "name": "dao_voting",
+  "address": "7ocog5ARqzjiUVRaxfX2qbcMcyvDCEiWeCF2zwyp5DSD",
+  "metadata": {
+    "name": "dao_voting",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
   "instructions": [
     {
-      "name": "createProposal",
+      "name": "create_proposal",
+      "discriminator": [
+        132,
+        116,
+        68,
+        174,
+        216,
+        160,
+        198,
+        22
+      ],
       "accounts": [
         {
           "name": "proposal",
-          "isMut": true,
-          "isSigner": false
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "proposal_id"
+              }
+            ]
+          }
         },
         {
           "name": "user",
-          "isMut": true,
-          "isSigner": true
+          "writable": true,
+          "signer": true
         },
         {
           "name": "treasury",
-          "isMut": true,
-          "isSigner": false,
           "docs": [
             "CHECK"
-          ]
+          ],
+          "writable": true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
@@ -248,44 +365,73 @@ export const IDL: DaoVoting = {
           "type": "i64"
         },
         {
-          "name": "tokenAmount",
+          "name": "token_amount",
           "type": {
             "vec": "u64"
           }
         },
         {
-          "name": "proposalId",
+          "name": "proposal_id",
           "type": "u64"
         }
       ]
     },
     {
       "name": "vote",
+      "discriminator": [
+        227,
+        110,
+        155,
+        23,
+        136,
+        126,
+        172,
+        25
+      ],
       "accounts": [
         {
           "name": "proposal",
-          "isMut": true,
-          "isSigner": false
+          "writable": true
         },
         {
           "name": "voter",
-          "isMut": true,
-          "isSigner": false
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "proposal"
+              }
+            ]
+          }
         },
         {
           "name": "user",
-          "isMut": true,
-          "isSigner": true
+          "writable": true,
+          "signer": true
         },
         {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
         {
-          "name": "optionIndex",
+          "name": "option_index",
           "type": "u8"
         }
       ]
@@ -293,7 +439,42 @@ export const IDL: DaoVoting = {
   ],
   "accounts": [
     {
-      "name": "proposal",
+      "name": "Proposal",
+      "discriminator": [
+        26,
+        94,
+        189,
+        187,
+        116,
+        136,
+        53,
+        33
+      ]
+    },
+    {
+      "name": "Voter",
+      "discriminator": [
+        241,
+        93,
+        35,
+        191,
+        254,
+        147,
+        17,
+        202
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "VotingPeriodEnded",
+      "msg": "The voting period for this proposal has ended."
+    }
+  ],
+  "types": [
+    {
+      "name": "Proposal",
       "type": {
         "kind": "struct",
         "fields": [
@@ -318,13 +499,13 @@ export const IDL: DaoVoting = {
             }
           },
           {
-            "name": "voteCounts",
+            "name": "vote_counts",
             "type": {
               "vec": "u64"
             }
           },
           {
-            "name": "createdAt",
+            "name": "created_at",
             "type": "i64"
           },
           {
@@ -332,7 +513,7 @@ export const IDL: DaoVoting = {
             "type": "i64"
           },
           {
-            "name": "tokenAmount",
+            "name": "token_amount",
             "type": {
               "vec": "u64"
             }
@@ -341,45 +522,24 @@ export const IDL: DaoVoting = {
       }
     },
     {
-      "name": "voter",
+      "name": "Voter",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "proposal",
-            "type": "publicKey"
+            "type": "pubkey"
           },
           {
             "name": "user",
-            "type": "publicKey"
+            "type": "pubkey"
           },
           {
-            "name": "optionVoted",
+            "name": "option_voted",
             "type": "u8"
           }
         ]
       }
-    }
-  ],
-  "types": [
-    {
-      "name": "VoteOnOption",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "optionIndex",
-            "type": "u8"
-          }
-        ]
-      }
-    }
-  ],
-  "errors": [
-    {
-      "code": 6000,
-      "name": "VotingPeriodEnded",
-      "msg": "The voting period for this proposal has ended."
     }
   ]
-};
+}
